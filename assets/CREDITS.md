@@ -1,8 +1,8 @@
 # Asset Credits
 
-Visual assets for **The Great Farm Crossing** visualizer (Pygame).
+Visual assets for **The Great Farm Crossing** (future UI / replay viewer).
 
-Recommended scale for the visualizer: **32×32** (use the `vectoraith/32x32/` folder).
+Recommended scale: **32×32** (use the `vectoraith/32x32/` folder). See `handoff.md` section 7 for tileset and sprite mapping.
 
 ---
 
@@ -31,8 +31,9 @@ Recommended scale for the visualizer: **32×32** (use the `vectoraith/32x32/` fo
 - **Authors:** Shadowfinder, Zabin, Daniel Eddeland (daneeklu)
 - **Source:** https://opengameart.org/content/lpc-rowboat-topdown-4-directional-recolor-for-rpg
 - **License:** CC-BY-SA 3.0+ / GPL 3.0+ / OGA-BY 3.0+
-- **Path:** `boat/rowboat.png`
-- **Notes:** Top-down rowboat with 4 directions (N/S/E/W). Use for boat crossing animation.
+- **Path:** `boat/rowboat.png` (sheet original)
+- **Paths no visualizador:** `boat/boat_to_the_right.png`, `boat/boat_to_the_left.png` (recortes derivados do sheet)
+- **Notes:** Travessia horizontal — proa à direita (ida) e à esquerda (volta).
 
 ---
 

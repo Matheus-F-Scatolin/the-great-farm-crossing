@@ -1,0 +1,13 @@
+{
+  "raposas": 6,
+  "ovelhas": 9,
+  "fazendeiros": 3,
+  "lambda_raposa": 0.5,
+  "lambda_ovelha": 0.4,
+  "lambda_fazendeiro": 0.3,
+  "seed": 42,
+  "boat_speed_ms": 1200,
+  "embark_ms": 200,
+  "return_ms": 800,
+  "max_cruzes": 0
+}

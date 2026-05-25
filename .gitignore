@@ -1,0 +1,15 @@
+# Binarios e artefatos de build
+farm_crossing
+src/*.o
+
+# Gravacoes JSONL da simulacao (UI futura)
+runs/*.jsonl
+runs/*.log
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store

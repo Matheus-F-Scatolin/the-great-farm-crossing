@@ -1,53 +1,95 @@
 # The Great Farm Crossing (A Grande Travessia da Fazenda) 🌾🛶
 
-Animação multithread interativa desenvolvida como projeto prático para a disciplina **MC504 - Sistemas Operacionais** (Instituto de Computação - UNICAMP).
+Animação multithread desenvolvida como projeto prático para a disciplina **MC504 - Sistemas Operacionais** (Instituto de Computação - UNICAMP).
 
-O projeto consiste em uma aplicação concorrente que resolve e visualiza um problema complexo de sincronização de threads utilizando **C (Pthreads)** no ecossistema de backend e uma interface gráfica rica desenvolvida em **Python (Pygame)**.
+O repositório contém o **motor de simulação em C (Pthreads)** e os **assets** para uma interface gráfica a ser implementada separadamente. A especificação completa da UI e o contrato de dados estão em [handoff.md](handoff.md).
 
 ---
 
 ## 📚 Inspirações
 
-Este projeto combina e estende duas fontes clássicas:
-
-1. ***The Little Book of Semaphores*** (Allen B. Downey) — o *River Crossing Problem*, usado como referência de sincronização com threads, mutex e variáveis de condição.
-2. **Problema do lobo, da cabra e do repolho** (*Propositiones ad acuendos juvenes*, Alcuin de York, século IX) — o enigma do fazendeiro que precisa atravessar um rio em um barco pequeno, levando um lobo, uma cabra (em muitas versões populares, uma **ovelha**) e um **repolho** (couve), sem deixar o lobo com a cabra/ovelha ou a cabra/ovelha com o repolho sozinhos em uma margem.
-
-**A Grande Travessia da Fazenda** retoma esse clima de fazenda e travessia de rio, mas adapta o enredo para o contexto de SO: em vez de um único fazendeiro transportando um item por viagem, há **filas concorrentes** de ovelhas, raposas e fazendeiros, um barco com **capacidade 3**, e regras de embarque pensadas para exercitar mutex, condvars e o padrão líder-seguidor.
+1. ***The Little Book of Semaphores*** (Allen B. Downey) — *River Crossing Problem*.
+2. **Problema do lobo, da cabra e do repolho** (Alcuin de York) — adaptado para filas concorrentes de ovelhas, raposas e fazendeiros, barco com capacidade **3**, e predicados de embarque com mutex/condvars e padrão líder–seguidor.
 
 ---
 
-## 📝 O Problema: Ovelhas, Raposas e Fazendeiros
+## 📝 O Problema
 
-Inspirado no clássico *River Crossing Problem* do livro *The Little Book of Semaphores* e, no tema de fazenda e travessia de rio, no **problema do lobo, da cabra (ou ovelha) e do repolho** de Alcuin de York, esta versão estende a complexidade lógica ao introduzir **três categorias de threads** com restrições de segurança assimétricas baseadas em predicados de estado.
-
-Na margem de origem de um rio, três tipos de personagens (threads) chegam de forma estocástica e aguardam em suas respectivas filas: **Ovelhas**, **Raposas** e **Fazendeiros**. O objetivo é transportá-los para a outra margem em um barco com capacidade máxima de **exatamente 3 passageiros**.
-
-### Regras de Segurança (Predicados de Embarque):
-Para que o barco possa partir com segurança sem que ocorra uma "carnificina" (condição de corrida lógica), a combinação de passageiros deve satisfazer estritamente um dos seguintes critérios:
-1. **3 Raposas** (Viajam em harmonia cooperativa).
-2. **3 Ovelhas** (Viajam em paz).
-3. **3 Fazendeiros** (Viajam em paz).
-4. **1 ou 2 Fazendeiros + Qualquer mistura de animais** (A presença do fazendeiro atua como trava de segurança, impedindo que as raposas ataquem as ovelhas durante o trajeto).
-
-Qualquer outra combinação (ex: 2 raposas e 1 ovelha sem um fazendeiro) violará as restrições e o algoritmo impedirá o embarque.
+Na margem esquerda, três filas chegam de forma estocástica: **Ovelhas**, **Raposas**, **Fazendeiros**. O barco transporta **exatamente 3** passageiros por viagem quando a combinação é válida (3 iguais, ou 1–2 fazendeiros com animais). Após desembarque na margem direita, o barco volta vazio à esquerda.
 
 ---
 
-## 🛠️ Arquitetura de Sincronização e Conceitos de S.O.
+## 🛠️ Arquitetura
 
-Para garantir a corretude e a exclusão mútua, o projeto explora robustamente os seguintes conceitos de Sistemas Operacionais:
-
-* **Mutex Locks (`pthread_mutex_t`):** Garantem a exclusão mútua e evitam condições de corrida ao manipular os contadores globais das filas e o estado de ocupação do barco.
-* **Variáveis de Condição (`pthread_cond_t`):** Utilizadas para bloquear as threads nas filas até que uma combinação válida seja formada, disparando sinais eficientes (`pthread_cond_broadcast`) para acordar as categorias exatas de threads selecionadas.
-* **Barreiras de Sincronização (Rendezvous):** Mecanismo que garante que os 3 passageiros se encontrem e subam a bordo de forma coordenada antes do início da viagem.
-* **Padrão Líder-Seguidor (Leader-Follower):** A última thread a subir a bordo e validar o predicado assume o papel de **Líder**. Ela é a única responsável por invocar a rotina de animação da travessia e, ao atracar, sinaliza às outras duas threads ("seguidoras") que o desembarque está liberado.
+- **Motor C:** threads, mutex, variáveis de condição, líder–seguidor.
+- **Saída para visualização:** uma linha JSON por evento em `stdout` (ver [handoff.md](handoff.md)).
+- **UI (futura):** processo ou ferramenta **separada** que lê o JSON gravado ou um pipe — **não** compartilha memória com o C. Fluxo recomendado: rodar `./farm_crossing ... > runs/demo.jsonl` e depois reproduzir com controles de pausa/velocidade.
 
 ---
 
-## 🎨 O Visualizador (Pygame UI)
+## Pré-requisitos
 
-A interface gráfica foi construída utilizando a biblioteca **Pygame** com pacotes de assets 2D gratuitos de alta qualidade, garantindo uma visualização clara da evolução do estado global do sistema em tempo real.
+- **gcc** com suporte a pthreads
+- **make**
 
-* **Renderização de Estados:** Exibição dinâmica das filas acumulando na margem esquerda, o processo de embarque dos 3 tripulantes selecionados, o deslocamento físico do barco pelo rio e o desembarque seguro na margem direita.
-* **Variação de Parâmetros:** Através da interface ou de arquivos de configuração, é possível alterar dinamicamente taxas de chegada das threads (frequência de geração de cada criatura), velocidade do barco e limites de simulação.
+## Build e execução
+
+```bash
+make
+
+# Simulação (JSON em stdout, logs em stderr)
+./run.sh --raposas 6 --ovelhas 9 --fazendeiros 3 --seed 42
+
+# Gravar eventos para a UI futura (pasta runs/ ja existe no repo)
+./run.sh --raposas 6 --ovelhas 9 --fazendeiros 3 --seed 42 > runs/demo.jsonl 2> runs/demo.log
+
+# Sem JSON (só logs em stderr)
+./farm_crossing --no-vis --raposas 6 --ovelhas 9 --fazendeiros 3
+```
+
+### Parâmetros CLI
+
+| Flag | Descrição | Default |
+|------|-----------|---------|
+| `--raposas N` | Número de threads raposa | 6 |
+| `--ovelhas N` | Número de threads ovelha | 9 |
+| `--fazendeiros N` | Número de threads fazendeiro | 3 |
+| `--lambda-raposa F` | Taxa de chegada (1/seg) | 0.5 |
+| `--lambda-ovelha F` | Taxa de chegada (1/seg) | 0.4 |
+| `--lambda-fazendeiro F` | Taxa de chegada (1/seg) | 0.3 |
+| `--seed N` | Semente aleatória | 42 |
+| `--boat-speed-ms N` | Duração da travessia (ms); `dur_ms` em `PARTIDA` | 1200 |
+| `--embark-ms N` | Pausa entre embarques/desembarques no C | 200 |
+| `--return-ms N` | Duração do retorno; `dur_ms` em `RETORNO` | 800 |
+| `--max-cruzes N` | Limite de viagens (0 = sem limite) | 0 |
+| `--no-vis` | Desliga JSON no stdout | off |
+
+> Combinações muito desbalanceadas podem deadlock. Demo estável: `6/9/3`.
+
+---
+
+## Estrutura do repositório
+
+```
+src/           Motor C (pthreads, mutex, condvars, JSON em stdout)
+assets/        Tilesets e sprites (VectoRaith, fox, barco) — ver assets/CREDITS.md
+handoff.md     Especificação da UI + protocolo + arquitetura desacoplada
+Makefile
+run.sh
+```
+
+## IPC (C → visualizador futuro)
+
+Uma linha JSON por evento em `stdout`:
+
+```json
+{"evt":"EMBARQUE","who":"OVELHA","id":2,"fila":{"r":1,"o":3,"f":0},"barco":{"r":0,"o":1,"f":0,"lado":"ESQUERDA","ocupacao":3},"direita":{"r":0,"o":0,"f":0},"cruzes":0,"ts":1234}
+```
+
+Eventos: `CHEGOU`, `EMBARQUE`, `PARTIDA`, `ATRACOU`, `DESEMBARQUE`, `RETORNO`, `FIM`.
+
+Detalhes, layout da tela, tilesets e controles de velocidade: **[handoff.md](handoff.md)** (seções 6 e 7).
+
+## Créditos de assets
+
+Ver [assets/CREDITS.md](assets/CREDITS.md).
