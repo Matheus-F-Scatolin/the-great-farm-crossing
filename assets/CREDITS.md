@@ -23,6 +23,8 @@ Recommended scale: **32×32** (use the `vectoraith/32x32/` folder). See `handoff
 | Terreno (primavera) | `vectoraith/32x32/Tilesets (Compact)/vectoraith_tileset_farmingsims_terrain_spring_expanded_32x32.png` |
 | Terreno (verão) | `vectoraith/32x32/Tilesets (Compact)/vectoraith_tileset_farmingsims_terrain_summer_expanded_32x32.png` |
 | Celeiro / construções | `vectoraith/32x32/Tilesets (Compact)/vectoraith_tileset_farmingsims_buildings_32x32.png` |
+| Detalhes (flores, tocos, rochas) — usado em `assets/ui/background_spring_1024x600.png` | `vectoraith/32x32/Tilesets (Modular)/vectoraith_tileset_farmingsims_details_spring_32x32.png` |
+| Fardos de feno — usado em `assets/ui/background_spring_1024x600.png` | `vectoraith/32x32/Tilesets (Modular)/vectoraith_tileset_farmingsims_buildings_32x32.png` |
 
 ---
 
