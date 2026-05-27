@@ -4,10 +4,16 @@
 
 FarmState g_farm;
 pthread_mutex_t g_mutex = PTHREAD_MUTEX_INITIALIZER;
+/* Acorda threads na fila quando um combo fica disponivel ou um slot de embarque abre. */
 pthread_cond_t g_cond_embarque = PTHREAD_COND_INITIALIZER;
+/* Seguidores aguardam o lider concluir atravessar_rio() antes de desembarcar logicamente. */
 pthread_cond_t g_cond_viagem = PTHREAD_COND_INITIALIZER;
 SimConfig g_config;
 
+/*
+ * Predicado do barco (capacidade 3): apenas combos seguros da especificacao.
+ * Ver the-great-farm-crossing.md — 3 iguais ou 1–2 fazendeiros com animais.
+ */
 int combinacao_valida(int r, int o, int f) {
     int total = r + o + f;
     if (total != 3) {
@@ -38,6 +44,7 @@ static int combo_disponivel(const FarmState *s, int r, int o, int f) {
     return combinacao_valida(r, o, f);
 }
 
+/* Escolhe o primeiro combo valido que a fila atual consegue formar (ordem fixa). */
 int escolher_combo(const FarmState *s, int *r, int *o, int *f) {
     static const int combos[][3] = {
         {3, 0, 0}, {0, 3, 0}, {0, 0, 3},
@@ -57,6 +64,7 @@ int escolher_combo(const FarmState *s, int *r, int *o, int *f) {
     return 0;
 }
 
+/* Reserva passageiros da fila no barco; embarque real e feito slot a slot nas threads. */
 void aplicar_combo(FarmState *s, int r, int o, int f) {
     s->raposas_fila -= r;
     s->ovelhas_fila -= o;
@@ -143,6 +151,7 @@ int farm_fila_total(const FarmState *s) {
     return s->raposas_fila + s->ovelhas_fila + s->fazendeiros_fila;
 }
 
+/* Ninguem mais vai chegar e a fila restante nao fecha nenhum combo de 3. */
 int farm_deadlock(const FarmState *s) {
     if (s->barco_ocupacao != 0 || s->barco_lado != LADO_ESQUERDA) {
         return 0;

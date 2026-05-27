@@ -2,7 +2,7 @@
 
 Animação multithread desenvolvida como projeto prático para a disciplina **MC504 - Sistemas Operacionais** (Instituto de Computação - UNICAMP).
 
-O repositório contém o **motor de simulação em C (Pthreads)** e os **assets** para uma interface gráfica a ser implementada separadamente. A especificação completa da UI e o contrato de dados estão em [handoff.md](handoff.md).
+O repositório contém o **motor de simulação em C (Pthreads)**, o **visualizador Pygame** (`ui/`) e os **assets** gráficos. O contrato entre motor e UI é JSONL em `stdout` (seção **IPC**).
 
 ---
 
@@ -22,8 +22,8 @@ Na margem esquerda, três filas chegam de forma estocástica: **Ovelhas**, **Rap
 ## 🛠️ Arquitetura
 
 - **Motor C:** threads, mutex, variáveis de condição, líder–seguidor.
-- **Saída para visualização:** uma linha JSON por evento em `stdout` (ver [handoff.md](handoff.md)).
-- **UI (futura):** processo ou ferramenta **separada** que lê o JSON gravado ou um pipe — **não** compartilha memória com o C. Fluxo recomendado: rodar `./farm_crossing ... > runs/demo.jsonl` e depois reproduzir com controles de pausa/velocidade.
+- **Saída para visualização:** uma linha JSON por evento em `stdout` (ver seção **IPC**).
+- **UI Pygame:** processo **separado** que lê um JSONL gravado (sem memória compartilhada com o C). Fluxo: gravar a simulação e reproduzir com pausa/velocidade.
 
 ---
 
@@ -31,6 +31,7 @@ Na margem esquerda, três filas chegam de forma estocástica: **Ovelhas**, **Rap
 
 - **gcc** com suporte a pthreads
 - **make**
+- **Python 3.10+** e **pygame-ce** (apenas para o visualizador)
 
 ## Build e execução
 
@@ -40,11 +41,17 @@ make
 # Simulação (JSON em stdout, logs em stderr)
 ./run.sh --raposas 6 --ovelhas 9 --fazendeiros 3 --seed 42
 
-# Gravar eventos para a UI futura (pasta runs/ ja existe no repo)
+# Gravar eventos para o visualizador (pasta runs/ ja existe no repo)
 ./run.sh --raposas 6 --ovelhas 9 --fazendeiros 3 --seed 42 > runs/demo.jsonl 2> runs/demo.log
 
 # Sem JSON (só logs em stderr)
 ./farm_crossing --no-vis --raposas 6 --ovelhas 9 --fazendeiros 3
+
+# Visualizador (requer display; instalar deps uma vez)
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python -m ui.main -i runs/demo.jsonl
+# Controles: Espaço pausa, +/- velocidade, R reset, Esc sair
 ```
 
 ### Parâmetros CLI
@@ -72,13 +79,14 @@ make
 
 ```
 src/           Motor C (pthreads, mutex, condvars, JSON em stdout)
+ui/            Visualizador Pygame (replay de JSONL)
 assets/        Tilesets e sprites (VectoRaith, fox, barco) — ver assets/CREDITS.md
-handoff.md     Especificação da UI + protocolo + arquitetura desacoplada
 Makefile
 run.sh
+requirements.txt
 ```
 
-## IPC (C → visualizador futuro)
+## IPC (C → visualizador)
 
 Uma linha JSON por evento em `stdout`:
 
@@ -88,7 +96,7 @@ Uma linha JSON por evento em `stdout`:
 
 Eventos: `CHEGOU`, `EMBARQUE`, `PARTIDA`, `ATRACOU`, `DESEMBARQUE`, `RETORNO`, `FIM`.
 
-Detalhes, layout da tela, tilesets e controles de velocidade: **[handoff.md](handoff.md)** (seções 6 e 7).
+Mapeamento de tilesets e sprites: [assets/CREDITS.md](assets/CREDITS.md).
 
 ## Créditos de assets
 

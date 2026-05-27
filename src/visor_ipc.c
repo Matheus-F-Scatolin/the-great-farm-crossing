@@ -20,7 +20,8 @@ static void emit_json_ex(const char *evt, TipoPassageiro who, int id, int dur_ms
     if (g_config.no_vis) {
         return;
     }
-    const char *who_str = who >= 0 ? tipo_nome(who) : "";
+    /* Eventos globais (PARTIDA, FIM, …) usam id < 0 e omitem o campo who. */
+    const char *who_str = (who == TIPO_RAPOSA || who == TIPO_OVELHA || who == TIPO_FAZENDEIRO) ? tipo_nome(who) : "";
     if (dur_ms > 0) {
         printf(
             "{\"evt\":\"%s\",\"who\":\"%s\",\"id\":%d,\"dur_ms\":%d,"
@@ -80,6 +81,10 @@ static void sleep_ms(int ms) {
     }
 }
 
+/*
+ * Simula a viagem do lider: emite JSON para o visualizador Pygame (stdout).
+ * Atualiza barco_lado; contadores da margem direita sao aplicados pelo lider em threads.c.
+ */
 void atravessar_rio(int leader_id, int trip_r, int trip_o, int trip_f) {
     (void)leader_id;
     visor_log("[Lider] Iniciando travessia (%d raposas, %d ovelhas, %d fazendeiros)\n", trip_r,

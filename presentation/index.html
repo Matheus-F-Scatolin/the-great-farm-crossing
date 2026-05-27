@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Grande Travessia da Fazenda</title>
+  <style>
+    :root {
+      --ink: #1f2a20;
+      --muted: #65705d;
+      --paper: #fff6d9;
+      --paper-2: #f4e4b8;
+      --grass: #4f7e4a;
+      --grass-dark: #2f5539;
+      --river: #4f9bc2;
+      --river-dark: #2c6f91;
+      --wood: #7b4e2f;
+      --gold: #e3ad3d;
+      --fox: #c56b35;
+      --sheep: #ece7d5;
+      --farmer: #435e8a;
+      --shadow: rgba(31, 42, 32, 0.22);
+      --mono: Menlo, Monaco, Consolas, "Courier New", monospace;
+      --display: "Iowan Old Style", Georgia, serif;
+      --body: Avenir, "Trebuchet MS", Verdana, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: #19251d;
+      color: var(--ink);
+      font-family: var(--body);
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 3;
+      mix-blend-mode: soft-light;
+    }
+
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 5px;
+      width: 0;
+      background: linear-gradient(90deg, var(--gold), #f6d67a, var(--fox));
+      z-index: 20;
+      transition: width .25s ease;
+      box-shadow: 0 0 16px rgba(227,173,61,.45);
+    }
+
+    .deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    @media (min-width: 900px) {
+      .deck {
+        position: absolute;
+        inset: 0;
+        width: min(100vw, calc(100vh * 16 / 9));
+        height: min(100vh, calc(100vw * 9 / 16));
+        margin: auto;
+        box-shadow: 0 28px 80px rgba(0,0,0,.45);
+      }
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 22px;
+      padding: 42px 64px 46px;
+      background:
+        radial-gradient(circle at 92% 8%, rgba(227,173,61,.22), transparent 22%),
+        linear-gradient(180deg, #f8efce, #efe0b0 55%, #d6c289);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(20px);
+      transition: opacity .24s ease, transform .28s ease, visibility .24s;
+      overflow: hidden;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+    }
+
+    .slide::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 92px;
+      background:
+        linear-gradient(180deg, transparent, rgba(47,85,57,.08) 24%, rgba(47,85,57,.18)),
+        repeating-linear-gradient(90deg, rgba(47,85,57,.22) 0 18px, rgba(79,126,74,.18) 18px 32px);
+      pointer-events: none;
+    }
+
+    .slide.hero {
+      grid-template-rows: 1fr;
+      padding: 0;
+      background: #203a2a;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      image-rendering: pixelated;
+      filter: saturate(1.08) contrast(1.04);
+    }
+
+    .hero-shade {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(17,31,22,.86), rgba(17,31,22,.52) 48%, rgba(17,31,22,.16));
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: min(740px, 58%);
+      padding: 58px 72px;
+      color: #fff9e8;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      margin: 0 0 16px;
+      padding: 8px 12px;
+      border: 2px solid rgba(255,249,232,.28);
+      background: rgba(31,42,32,.38);
+      color: #f7d27b;
+      font-family: var(--mono);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      font-family: var(--display);
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 720px;
+      font-size: clamp(48px, 6.4vw, 86px);
+      line-height: .94;
+      text-wrap: balance;
+    }
+
+    h2 {
+      max-width: 860px;
+      font-size: clamp(34px, 4vw, 52px);
+      line-height: 1;
+      text-wrap: balance;
+    }
+
+    h3 {
+      font-size: 25px;
+      line-height: 1.05;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 19px;
+      line-height: 1.45;
+    }
+
+    strong { color: var(--ink); }
+
+    code {
+      padding: 3px 7px;
+      border: 1px solid rgba(31,42,32,.18);
+      background: rgba(255,255,255,.54);
+      font-family: var(--mono);
+      font-size: .88em;
+      color: #203824;
+    }
+
+    pre {
+      margin: 0;
+      padding: 18px 20px;
+      border: 3px solid #2f3a2e;
+      background: #17241b;
+      color: #f8f2d7;
+      font-family: var(--mono);
+      font-size: 16px;
+      line-height: 1.45;
+      overflow: hidden;
+      box-shadow: 8px 8px 0 rgba(31,42,32,.16);
+    }
+
+    .topline {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .section-tag {
+      flex: 0 0 auto;
+      margin-top: 8px;
+      padding: 8px 12px;
+      border: 2px solid rgba(31,42,32,.18);
+      background: rgba(255,255,255,.42);
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--grass-dark);
+      text-transform: uppercase;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      min-height: 0;
+      display: grid;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .split.wide-left { grid-template-columns: 1.18fr .82fr; }
+    .split.wide-right { grid-template-columns: .82fr 1.18fr; }
+
+    .panel {
+      border: 3px solid #2b352b;
+      background: rgba(255,249,230,.78);
+      box-shadow: 10px 10px 0 rgba(31,42,32,.14);
+      padding: 20px;
+    }
+
+    .dark-panel {
+      border-color: #1e2a22;
+      background: linear-gradient(180deg, #203226, #17241b);
+      color: #fff9e8;
+      box-shadow: 10px 10px 0 rgba(31,42,32,.18);
+    }
+
+    .dark-panel p,
+    .dark-panel li { color: #dccfa6; }
+
+    .note-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .note-list li {
+      position: relative;
+      padding-left: 26px;
+      color: #526049;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .note-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 11px;
+      width: 12px;
+      height: 12px;
+      background: var(--gold);
+      border: 2px solid #2b352b;
+      box-shadow: 3px 3px 0 rgba(31,42,32,.18);
+    }
+
+    .rule-grid, .module-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .rule, .module {
+      min-height: 132px;
+      display: grid;
+      align-content: space-between;
+      gap: 12px;
+      padding: 16px;
+      border: 3px solid #2b352b;
+      background: rgba(255,249,230,.8);
+      box-shadow: 6px 6px 0 rgba(31,42,32,.14);
+    }
+
+    .module-grid { grid-template-columns: repeat(3, 1fr); }
+    .module { min-height: 150px; }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: 1.02fr .98fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .concept-stack {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .concept-card {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 12px;
+      align-items: center;
+      min-height: 158px;
+      padding: 12px;
+      border: 3px solid #2b352b;
+      background: rgba(255,249,230,.84);
+      box-shadow: 6px 6px 0 rgba(31,42,32,.12);
+    }
+
+    .concept-icon {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 2px solid #2b352b;
+      background: #f5d674;
+      font-family: var(--mono);
+      font-weight: 800;
+      color: #203824;
+      box-shadow: 3px 3px 0 rgba(31,42,32,.16);
+    }
+
+    .concept-card b {
+      display: block;
+      margin-bottom: 4px;
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--fox);
+      text-transform: uppercase;
+    }
+
+    .concept-card span {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .concept-scene {
+      position: relative;
+      min-height: 360px;
+      border: 3px solid #2b352b;
+      background:
+        linear-gradient(90deg, #78a864 0 34%, #4f9bc2 34% 66%, #80ad70 66% 100%);
+      box-shadow: 10px 10px 0 rgba(31,42,32,.14);
+      overflow: hidden;
+    }
+
+    .concept-scene::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
+      background-size: 32px 32px;
+      opacity: .45;
+    }
+
+    .concept-lock {
+      position: absolute;
+      left: 50%;
+      top: 18px;
+      transform: translateX(-50%);
+      padding: 8px 12px;
+      border: 2px solid #2b352b;
+      background: rgba(255,249,230,.9);
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--grass-dark);
+      z-index: 1;
+    }
+
+    .concept-queue, .concept-done {
+      position: absolute;
+      top: 108px;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      padding: 10px;
+      border: 2px solid rgba(31,42,32,.26);
+      background: rgba(255,249,230,.66);
+    }
+
+    .concept-queue { left: 24px; }
+    .concept-done { right: 24px; }
+
+    .concept-boat {
+      position: absolute;
+      left: 50%;
+      top: 185px;
+      transform: translateX(-50%);
+      z-index: 1;
+      display: grid;
+      justify-items: center;
+    }
+
+    .concept-passengers {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      transform: translateY(18px);
+      z-index: 1;
+    }
+
+    .concept-caption {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 22px;
+      z-index: 1;
+      padding: 12px;
+      border: 2px solid #2b352b;
+      background: rgba(23,36,27,.9);
+      color: #f8f2d7;
+      font-family: var(--mono);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .sprites {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      min-height: 62px;
+    }
+
+    .sprite {
+      image-rendering: pixelated;
+      object-fit: contain;
+      filter: drop-shadow(3px 5px 0 rgba(31,42,32,.16));
+    }
+
+    .sprite.boat { width: 170px; }
+    .sprite.tree { width: 86px; }
+    .sprite.house { width: 138px; }
+    .sprite.corn { width: 32px; }
+    .sprite.fence { width: 88px; }
+    .sprite.dirt { width: 36px; }
+
+    .farm-strip {
+      position: absolute;
+      right: 56px;
+      bottom: 34px;
+      z-index: 2;
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      opacity: .95;
+    }
+
+    .river-diagram {
+      position: relative;
+      height: 380px;
+      border: 3px solid #2b352b;
+      background:
+        linear-gradient(90deg, #6ea15d 0 33%, #4f9bc2 33% 67%, #75a66a 67% 100%);
+      box-shadow: 10px 10px 0 rgba(31,42,32,.14);
+      overflow: hidden;
+    }
+
+    .river-diagram::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
+      background-size: 32px 32px;
+      opacity: .42;
+    }
+
+    .river-label {
+      position: absolute;
+      top: 18px;
+      padding: 6px 10px;
+      border: 2px solid #2b352b;
+      background: rgba(255,249,230,.88);
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--ink);
+    }
+
+    .river-label.left { left: 20px; }
+    .river-label.right { right: 20px; }
+    .river-label.water { left: 50%; transform: translateX(-50%); }
+
+    .boat-stack {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -38%);
+      display: grid;
+      place-items: center;
+    }
+
+    .boat-passengers {
+      display: flex;
+      align-items: flex-end;
+      gap: 7px;
+      transform: translateY(28px);
+      z-index: 1;
+    }
+
+    .arrival-timeline {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+      padding: 14px;
+      border: 2px solid rgba(31,42,32,.22);
+      background: rgba(255,255,255,.3);
+    }
+
+    .arrival-row {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 12px;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .arrival-label {
+      color: var(--grass-dark);
+      font-weight: 700;
+    }
+
+    .arrival-track {
+      position: relative;
+      height: 54px;
+      border-bottom: 4px solid #2b352b;
+    }
+
+    .arrival-event {
+      position: absolute;
+      bottom: -8px;
+      display: grid;
+      justify-items: center;
+      gap: 3px;
+      transform: translateX(-50%);
+    }
+
+    .arrival-event::after {
+      content: "";
+      width: 12px;
+      height: 12px;
+      border: 2px solid #2b352b;
+      background: var(--gold);
+      box-shadow: 3px 3px 0 rgba(31,42,32,.16);
+    }
+
+    .arrival-event span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .lambda-layout {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 26px;
+      align-items: center;
+    }
+
+    .chart-wrap {
+      height: 275px;
+      padding: 18px;
+      border: 3px solid #2b352b;
+      background: rgba(255,249,230,.82);
+      box-shadow: 10px 10px 0 rgba(31,42,32,.14);
+    }
+
+    #lambdaChart {
+      display: block;
+      width: 100%;
+      height: 100%;
+      image-rendering: auto;
+    }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend i {
+      display: block;
+      width: 18px;
+      height: 4px;
+      border: 1px solid rgba(31,42,32,.28);
+    }
+
+    .state-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .state-cell {
+      min-height: 150px;
+      padding: 16px;
+      border: 3px solid #2b352b;
+      background: rgba(255,249,230,.82);
+      box-shadow: 6px 6px 0 rgba(31,42,32,.12);
+    }
+
+    .state-cell .count {
+      display: block;
+      margin-top: 10px;
+      font-family: var(--display);
+      font-size: 54px;
+      line-height: 1;
+      color: var(--grass-dark);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .flow-step {
+      min-height: 190px;
+      display: grid;
+      align-content: space-between;
+      gap: 10px;
+      padding: 16px;
+      border: 3px solid #2b352b;
+      background: rgba(255,249,230,.82);
+      box-shadow: 6px 6px 0 rgba(31,42,32,.12);
+    }
+
+    .flow-step b, .rule b, .module b, .state-cell b {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--fox);
+      text-transform: uppercase;
+    }
+
+    .flow-step span, .rule span, .module span, .state-cell span {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .concept-card span {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .sync-stage {
+      display: grid;
+      grid-template-columns: .85fr 1.3fr .85fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .sync-column {
+      display: grid;
+      align-content: space-between;
+      gap: 12px;
+      min-height: 330px;
+      padding: 18px;
+      border: 3px solid #2b352b;
+      background: rgba(255,249,230,.82);
+      box-shadow: 8px 8px 0 rgba(31,42,32,.12);
+    }
+
+    .sync-column.dark-panel {
+      background: linear-gradient(180deg, #203226, #17241b);
+      color: #fff9e8;
+    }
+
+    .sync-column.dark-panel p {
+      color: #dccfa6;
+    }
+
+    .sync-column.dark-panel code {
+      background: rgba(255,249,230,.92);
+      color: #203824;
+    }
+
+    .sync-column h3 {
+      font-size: 28px;
+    }
+
+    .sync-column p {
+      font-size: 17px;
+    }
+
+    .sync-river {
+      position: relative;
+      min-height: 330px;
+      border: 3px solid #2b352b;
+      background:
+        linear-gradient(90deg, #78a864 0 22%, #4f9bc2 22% 78%, #80ad70 78% 100%);
+      box-shadow: 8px 8px 0 rgba(31,42,32,.12);
+      overflow: hidden;
+    }
+
+    .sync-river::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
+      background-size: 32px 32px;
+      opacity: .4;
+    }
+
+    .sync-node {
+      position: absolute;
+      z-index: 1;
+      padding: 8px 10px;
+      border: 2px solid #2b352b;
+      background: rgba(255,249,230,.88);
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--grass-dark);
+      box-shadow: 4px 4px 0 rgba(31,42,32,.14);
+    }
+
+    .sync-node.mutex { top: 18px; left: 50%; transform: translateX(-50%); }
+    .sync-node.embark { top: 98px; left: 28px; }
+    .sync-node.trip { top: 98px; right: 28px; }
+    .sync-node.leader { bottom: 18px; left: 50%; transform: translateX(-50%); background: #f5d674; }
+
+    .sync-boat {
+      position: absolute;
+      z-index: 1;
+      left: 50%;
+      top: 52%;
+      transform: translate(-50%, -50%);
+      display: grid;
+      justify-items: center;
+    }
+
+    .sync-crew {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      transform: translateY(20px);
+      z-index: 1;
+    }
+
+    .json-line {
+      display: grid;
+      gap: 10px;
+      font-family: var(--mono);
+      font-size: 15px;
+      color: #f8f2d7;
+    }
+
+    .json-line mark {
+      padding: 2px 4px;
+      background: rgba(227,173,61,.24);
+      color: #ffe28b;
+    }
+
+    .screenshot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .shot {
+      display: grid;
+      gap: 10px;
+    }
+
+    .shot img {
+      width: 100%;
+      border: 3px solid #2b352b;
+      box-shadow: 6px 6px 0 rgba(31,42,32,.14);
+    }
+
+    .shot span {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .closing {
+      display: grid;
+      grid-template-columns: .95fr 1.05fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .command {
+      display: block;
+      margin-top: 10px;
+      padding: 12px 14px;
+      background: rgba(23,36,27,.94);
+      color: #f8f2d7;
+      font-family: var(--mono);
+      font-size: 15px;
+      line-height: 1.4;
+      border: 2px solid #2b352b;
+    }
+
+    .nav {
+      position: fixed;
+      z-index: 21;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 10px;
+      border: 2px solid rgba(255,249,230,.28);
+      background: rgba(25,37,29,.82);
+      color: #fff9e8;
+      font-family: var(--mono);
+      backdrop-filter: blur(8px);
+    }
+
+    .nav button {
+      width: 36px;
+      height: 32px;
+      border: 2px solid rgba(255,249,230,.36);
+      background: rgba(255,249,230,.1);
+      color: #fff9e8;
+      font-family: var(--mono);
+      cursor: pointer;
+    }
+
+    .nav button:hover { background: rgba(227,173,61,.34); }
+
+    @media (max-width: 900px) {
+      body { overflow: auto; }
+      .deck {
+        height: auto;
+        overflow: visible;
+      }
+      .slide {
+        position: relative;
+        min-height: 100vh;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        padding: 32px 24px 72px;
+      }
+      .slide:not(.active) { display: none; }
+      .split, .split.wide-left, .split.wide-right, .lambda-layout, .closing {
+        grid-template-columns: 1fr;
+      }
+      .rule-grid, .module-grid, .state-board, .flow, .screenshot-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero-content {
+        width: 100%;
+        padding: 44px 28px;
+      }
+      .farm-strip { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progress"></div>
+  <main class="deck" id="deck">
+    <section class="slide hero active" data-title="Capa">
+      <img class="hero-bg" src="../assets/ui/background_spring_1024x600.png" alt="Cenario pixel-art de uma fazenda com rio">
+      <div class="hero-shade"></div>
+      <div class="hero-content">
+        <div class="eyebrow">MC504 | Sistemas Operacionais</div>
+        <h1>A Grande Travessia da Fazenda</h1>
+        <p style="max-width: 650px; margin-top: 20px; color: #f7e9bd;">Uma animação multithread com pthreads, predicados de segurança, liderança por viagem e visualização em Pygame.</p>
+        <p style="margin-top: 22px; color: #f7d27b; font-family: var(--mono); font-size: 17px;">Matheus Ferracciú Scatolin | RA 252099</p>
+      </div>
+      <div class="farm-strip">
+        <img class="sprite house" src="../assets/vectoraith/32x32/Tilesets%20(Compact)/house.png" alt="">
+        <img class="sprite tree" src="../assets/vectoraith/32x32/Tilesets%20(Compact)/tree.png" alt="">
+        <img class="sprite corn" src="../assets/vectoraith/32x32/Tilesets%20(Compact)/corn.png" alt="">
+      </div>
+    </section>
+
+    <section class="slide" data-title="Enunciado">
+      <div class="topline">
+        <h2>O desafio era mostrar sincronização acontecendo</h2>
+        <div class="section-tag">01 | Enunciado</div>
+      </div>
+      <div class="content split">
+        <div class="panel">
+          <ul class="note-list">
+            <li>Implementar uma aplicação multithread com <strong>semáforos, mutex locks ou variáveis de condição</strong>.</li>
+            <li>Criar um visualizador capaz de mostrar a evolução do estado global, não apenas linhas de log.</li>
+            <li>Permitir variação de parâmetros e apresentar uma execução real no vídeo.</li>
+          </ul>
+        </div>
+        <div class="river-diagram" aria-label="Diagrama do problema">
+          <span class="river-label left">threads em fila</span>
+          <span class="river-label water">recurso compartilhado</span>
+          <span class="river-label right">margem destino</span>
+          <div class="boat-stack">
+            <div class="boat-passengers">
+              <img class="sprite fox" src="assets/sprites/fox.png" alt="Raposa">
+              <img class="sprite sheep" src="assets/sprites/sheep.png" alt="Ovelha">
+              <img class="sprite farmer" src="assets/sprites/farmer.png" alt="Fazendeiro">
+            </div>
+            <img class="sprite boat" src="../assets/boat/boat_to_the_right.png" alt="Barco">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Inspiração">
+      <div class="topline">
+        <h2>Duas referências viraram um problema novo</h2>
+        <div class="section-tag">02 | Inspiração</div>
+      </div>
+      <div class="content split wide-right">
+        <div class="panel dark-panel">
+          <h3>River Crossing</h3>
+          <p style="margin-top: 12px;">Do livro <em>The Little Book of Semaphores</em>: grupos precisam sincronizar para atravessar um rio respeitando restrições de composição.</p>
+        </div>
+        <div class="panel">
+          <h3>Fazenda com predadores e guardiões</h3>
+          <p style="margin-top: 12px;">A adaptação troca categorias abstratas por <strong>raposas</strong>, <strong>ovelhas</strong> e <strong>fazendeiros</strong>. O fazendeiro funciona como a condição de segurança para misturar animais no barco.</p>
+          <div class="sprites" style="margin-top: 24px;">
+            <img class="sprite fox" src="assets/sprites/fox.png" alt="Raposa">
+            <img class="sprite sheep" src="assets/sprites/sheep.png" alt="Ovelha">
+            <img class="sprite farmer" src="assets/sprites/farmer.png" alt="Fazendeiro">
+            <img class="sprite fence" src="../assets/vectoraith/32x32/Tilesets%20(Compact)/fences.png" alt="">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Conceitos">
+      <div class="topline">
+        <h2>Conceitos de SO aparecem como regras da travessia</h2>
+        <div class="section-tag">03 | Conceitos</div>
+      </div>
+      <div class="content concept-grid">
+        <div class="concept-stack">
+          <div class="concept-card">
+            <div class="concept-icon">M</div>
+            <div><b>Mutex</b><span>Garante que fila, barco e margem direita sejam atualizados por uma thread por vez.</span></div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-icon">CV</div>
+            <div><b>Variáveis de condição</b><span>Threads dormem enquanto não há combo válido ou enquanto a viagem ainda não terminou.</span></div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-icon">P</div>
+            <div><b>Predicado</b><span>A regra do barco decide quando o estado compartilhado permite prosseguir.</span></div>
+          </div>
+          <div class="concept-card">
+            <div class="concept-icon">L</div>
+            <div><b>Líder-seguidor</b><span>Uma thread fecha o grupo e conduz a travessia; as outras sincronizam com ela.</span></div>
+          </div>
+        </div>
+        <div class="concept-scene" aria-label="Mapa dos conceitos no problema da fazenda">
+          <div class="concept-lock">g_mutex protege o estado global</div>
+          <div class="concept-queue">
+            <img class="sprite fox" src="assets/sprites/fox.png" alt="">
+            <img class="sprite sheep" src="assets/sprites/sheep.png" alt="">
+            <img class="sprite farmer" src="assets/sprites/farmer.png" alt="">
+          </div>
+          <div class="concept-boat">
+            <div class="concept-passengers">
+              <img class="sprite fox" src="assets/sprites/fox.png" alt="">
+              <img class="sprite sheep" src="assets/sprites/sheep.png" alt="">
+              <img class="sprite farmer" src="assets/sprites/farmer.png" alt="">
+            </div>
+            <img class="sprite boat" src="../assets/boat/boat_to_the_right.png" alt="">
+          </div>
+          <div class="concept-done">
+            <img class="sprite sheep" src="assets/sprites/sheep.png" alt="">
+            <img class="sprite farmer" src="assets/sprites/farmer.png" alt="">
+          </div>
+          <div class="concept-caption">fila esperando cond_embarque → combo seguro → líder atravessa → seguidores acordam em cond_viagem</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Regras">
+      <div class="topline">
+        <h2>O barco só parte cheio e seguro</h2>
+        <div class="section-tag">04 | Regras</div>
+      </div>
+      <div class="content">
+        <div class="rule-grid">
+          <div class="rule">
+            <b>válido</b>
+            <div class="sprites">
+              <img class="sprite fox" src="assets/sprites/fox.png" alt="">
+              <img class="sprite fox" src="assets/sprites/fox.png" alt="">
+              <img class="sprite fox" src="assets/sprites/fox.png" alt="">
+            </div>
+            <span>3 raposas</span>
+          </div>
+          <div class="rule">
+            <b>válido</b>
+            <div class="sprites">
+              <img class="sprite sheep" src="assets/sprites/sheep.png" alt="">
+              <img class="sprite sheep" src="assets/sprites/sheep.png" alt="">
+              <img class="sprite sheep" src="assets/sprites/sheep.png" alt="">
+            </div>
+            <span>3 ovelhas</span>
+          </div>
+          <div class="rule">
+            <b>válido</b>
+            <div class="sprites">
+              <img class="sprite farmer" src="assets/sprites/farmer.png" alt="">
+              <img class="sprite farmer" src="assets/sprites/farmer.png" alt="">
+              <img class="sprite farmer" src="assets/sprites/farmer.png" alt="">
+            </div>
+            <span>3 fazendeiros</span>
+          </div>
+          <div class="rule">
+            <b>válido</b>
+            <div class="sprites">
+              <img class="sprite fox" src="assets/sprites/fox.png" alt="">
+              <img class="sprite sheep" src="assets/sprites/sheep.png" alt="">
+              <img class="sprite farmer" src="assets/sprites/farmer.png" alt="">
+            </div>
+            <span>mistura com 1 ou 2 fazendeiros</span>
+          </div>
+        </div>
+        <div class="panel dark-panel">
+          <p><strong style="color:#f7d27b;">Regra central:</strong> combinações com raposa e ovelha sem fazendeiro são rejeitadas. Isso transforma a escolha do grupo em um predicado de sincronização.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Lambda">
+      <div class="topline">
+        <h2>As chegadas são estocásticas: λ controla o ritmo</h2>
+        <div class="section-tag">05 | Poisson</div>
+      </div>
+      <div class="content lambda-layout">
+        <div>
+          <div class="chart-wrap">
+            <canvas id="lambdaChart" width="720" height="360" aria-label="Curvas exponenciais para lambdas diferentes"></canvas>
+          </div>
+          <div class="legend">
+            <span><i style="background:#2c6f91"></i>λ = 0.3</span>
+            <span><i style="background:#c56b35"></i>λ = 0.5</span>
+            <span><i style="background:#e3ad3d"></i>λ = 1.0</span>
+          </div>
+        </div>
+        <div class="panel">
+          <ul class="note-list">
+            <li><strong>λ</strong> é a taxa média de chegada por segundo.</li>
+            <li>Um processo de Poisson representa chegadas independentes ao longo do tempo.</li>
+            <li>O código sorteia o intervalo até a próxima chegada com <code>delay = -log(u) / lambda</code>.</li>
+            <li>Quanto maior o λ, menor tende a ser o intervalo entre threads chegando à fila.</li>
+          </ul>
+          <div class="arrival-timeline" aria-label="Comparacao de chegadas para lambdas diferentes">
+            <div class="arrival-row">
+              <span class="arrival-label">λ baixo</span>
+              <div class="arrival-track">
+                <div class="arrival-event" style="left: 12%;"><img class="sprite sheep" src="assets/sprites/sheep.png" alt=""><span>t0</span></div>
+                <div class="arrival-event" style="left: 58%;"><img class="sprite fox" src="assets/sprites/fox.png" alt=""><span>t1</span></div>
+                <div class="arrival-event" style="left: 88%;"><img class="sprite farmer" src="assets/sprites/farmer.png" alt=""><span>t2</span></div>
+              </div>
+            </div>
+            <div class="arrival-row">
+              <span class="arrival-label">λ alto</span>
+              <div class="arrival-track">
+                <div class="arrival-event" style="left: 12%;"><img class="sprite sheep" src="assets/sprites/sheep.png" alt=""><span>t0</span></div>
+                <div class="arrival-event" style="left: 25%;"><img class="sprite fox" src="assets/sprites/fox.png" alt=""><span>t1</span></div>
+                <div class="arrival-event" style="left: 38%;"><img class="sprite farmer" src="assets/sprites/farmer.png" alt=""><span>t2</span></div>
+                <div class="arrival-event" style="left: 52%;"><img class="sprite sheep" src="assets/sprites/sheep.png" alt=""><span>t3</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Threads">
+      <div class="topline">
+        <h2>Uma entidade, uma thread, um ciclo de vida</h2>
+        <div class="section-tag">06 | Modelo concorrente</div>
+      </div>
+      <div class="content split">
+        <div class="panel">
+          <ul class="note-list">
+            <li>O programa cria uma thread para cada raposa, ovelha e fazendeiro.</li>
+            <li>Cada thread dorme um tempo aleatório, entra na fila e tenta participar de um combo válido.</li>
+            <li>A concorrência real aparece quando várias threads acordam, disputam o mutex e dependem das condições do barco.</li>
+          </ul>
+        </div>
+        <pre><code>sleep_arrival_delay(tipo);
+pthread_mutex_lock(&g_mutex);
+
+increment_fila(tipo);
+visor_emit_chegou(tipo, id);
+
+while (!embarcou) {
+  tentar_liderar_ou_embarcar();
+  pthread_cond_wait(&g_cond_embarque, &g_mutex);
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Estado">
+      <div class="topline">
+        <h2>O estado global é pequeno, mas expressivo</h2>
+        <div class="section-tag">07 | FarmState</div>
+      </div>
+      <div class="content">
+        <div class="state-board">
+          <div class="state-cell">
+            <b>fila esquerda</b>
+            <span class="count">r o f</span>
+            <span>Quantos passageiros de cada tipo esperam para embarcar.</span>
+          </div>
+          <div class="state-cell">
+            <b>barco</b>
+            <span class="count">3</span>
+            <span>Ocupação, lado atual, passageiros reservados e já embarcados.</span>
+          </div>
+          <div class="state-cell">
+            <b>margem direita</b>
+            <span class="count">✓</span>
+            <span>Contadores de quem já completou a travessia.</span>
+          </div>
+        </div>
+        <div class="panel dark-panel">
+          <p>Tudo isso é protegido por <code>g_mutex</code>. A UI não lê memória compartilhada; ela só recebe fotografias desse estado em eventos JSONL.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Predicado">
+      <div class="topline">
+        <h2>O predicado separa física de segurança</h2>
+        <div class="section-tag">08 | Combos</div>
+      </div>
+      <div class="content split wide-left">
+        <pre><code>int combinacao_valida(int r, int o, int f) {
+  int total = r + o + f;
+  if (total != 3) return 0;
+  if (r == 3 || o == 3 || f == 3) return 1;
+  if ((f == 1 || f == 2) && (r > 0 || o > 0)) return 1;
+  return 0;
+}</code></pre>
+        <div class="panel">
+          <ul class="note-list">
+            <li><code>combinacao_valida()</code> codifica a regra do problema.</li>
+            <li><code>escolher_combo()</code> percorre uma ordem fixa de combinações válidas.</li>
+            <li><code>aplicar_combo()</code> reserva os passageiros da fila no barco.</li>
+          </ul>
+          <div class="sprites" style="margin-top: 22px;">
+            <img class="sprite boat" src="../assets/boat/boat_to_the_right.png" alt="">
+            <img class="sprite dirt" src="../assets/vectoraith/32x32/Tilesets%20(Compact)/dirt.png" alt="">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Sincronização">
+      <div class="topline">
+        <h2>Líder-seguidor organiza a travessia</h2>
+        <div class="section-tag">09 | Sincronização</div>
+      </div>
+      <div class="content">
+        <div class="sync-stage">
+          <div class="sync-column">
+            <div>
+              <h3>Antes de partir</h3>
+              <p>Threads chegam, entram na fila e dormem se o predicado ainda não fecha um combo seguro.</p>
+            </div>
+            <div class="sprites">
+              <img class="sprite fox" src="assets/sprites/fox.png" alt="">
+              <img class="sprite sheep" src="assets/sprites/sheep.png" alt="">
+              <img class="sprite farmer" src="assets/sprites/farmer.png" alt="">
+            </div>
+            <code>pthread_cond_wait(&g_cond_embarque, &g_mutex)</code>
+          </div>
+          <div class="sync-river" aria-label="Diagrama de sincronizacao lider-seguidor">
+            <div class="sync-node mutex">mutex: estado global</div>
+            <div class="sync-node embark">cond_embarque</div>
+            <div class="sync-node trip">cond_viagem</div>
+            <div class="sync-node leader">líder atravessa fora da seção crítica</div>
+            <div class="sync-boat">
+              <div class="sync-crew">
+                <img class="sprite fox" src="assets/sprites/fox.png" alt="">
+                <img class="sprite sheep" src="assets/sprites/sheep.png" alt="">
+                <img class="sprite farmer" src="assets/sprites/farmer.png" alt="">
+              </div>
+              <img class="sprite boat" src="../assets/boat/boat_to_the_right.png" alt="">
+            </div>
+          </div>
+          <div class="sync-column dark-panel">
+            <div>
+              <h3>Depois do combo</h3>
+              <p>O líder emite a travessia; seguidores ficam bloqueados até a chegada segura.</p>
+            </div>
+            <div class="sprites">
+              <img class="sprite boat" src="../assets/boat/boat_to_the_left.png" alt="">
+            </div>
+            <code>pthread_cond_broadcast(&g_cond_viagem)</code>
+          </div>
+        </div>
+        <div class="panel dark-panel">
+          <p>A travessia é uma barreira de três passageiros: ninguém desembarca logicamente antes de todos embarcarem e o líder concluir a viagem.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Fluxo">
+      <div class="topline">
+        <h2>Uma viagem vira uma sequência observável</h2>
+        <div class="section-tag">10 | Fluxo</div>
+      </div>
+      <div class="content">
+        <div class="flow">
+          <div class="flow-step"><b>CHEGOU</b><img class="sprite sheep" src="assets/sprites/sheep.png" alt=""><span>Thread entra na fila.</span></div>
+          <div class="flow-step"><b>EMBARQUE</b><img class="sprite boat" src="../assets/boat/boat_to_the_right.png" alt=""><span>Combo é reservado e slots são reivindicados.</span></div>
+          <div class="flow-step"><b>PARTIDA</b><img class="sprite boat" src="../assets/boat/boat_to_the_right.png" alt=""><span>Líder inicia a animação temporal.</span></div>
+          <div class="flow-step"><b>DESEMBARQUE</b><div class="sprites"><img class="sprite fox" src="assets/sprites/fox.png" alt=""><img class="sprite farmer" src="assets/sprites/farmer.png" alt=""></div><span>Passageiros chegam à direita.</span></div>
+          <div class="flow-step"><b>RETORNO</b><img class="sprite boat" src="../assets/boat/boat_to_the_left.png" alt=""><span>Barco volta vazio para a esquerda.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="IPC">
+      <div class="topline">
+        <h2>O contrato entre C e Pygame é JSONL</h2>
+        <div class="section-tag">11 | IPC</div>
+      </div>
+      <div class="content split wide-left">
+        <div class="panel dark-panel">
+          <div class="json-line">
+            <span>{</span>
+            <span>&nbsp;&nbsp;"evt": <mark>"EMBARQUE"</mark>, "who": "FAZENDEIRO", "id": 8,</span>
+            <span>&nbsp;&nbsp;"fila": {"r":0,"o":0,"f":0},</span>
+            <span>&nbsp;&nbsp;"barco": {"r":1,"o":1,"f":1,"lado":"ESQUERDA"},</span>
+            <span>&nbsp;&nbsp;"direita": {"r":0,"o":0,"f":0}, "ts": ...</span>
+            <span>}</span>
+          </div>
+        </div>
+        <div class="panel">
+          <ul class="note-list">
+            <li>O C escreve uma linha JSON por evento em <code>stdout</code>.</li>
+            <li>Logs humanos ficam em <code>stderr</code>, sem poluir o visualizador.</li>
+            <li>O replay usa <code>ts</code> e <code>dur_ms</code> para preservar o tempo relativo da simulação.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Visualizador">
+      <div class="topline">
+        <h2>O visualizador reconstrói a cena a partir dos eventos</h2>
+        <div class="section-tag">12 | Pygame</div>
+      </div>
+      <div class="content">
+        <div class="module-grid">
+          <div class="module">
+            <b>protocol.py</b>
+            <span>Transforma cada linha JSON em dataclasses: evento, fila, barco e margem direita.</span>
+          </div>
+          <div class="module">
+            <b>replay.py</b>
+            <span>Rebaseia timestamps, controla pausa, velocidade e agenda os eventos.</span>
+          </div>
+          <div class="module">
+            <b>state.py + scene.py</b>
+            <span>Derivam estado visual e desenham sprites, barco interpolado, HUD e overlay final.</span>
+          </div>
+        </div>
+        <div class="screenshot-grid">
+          <div class="shot"><img src="assets/screenshots/embarque.png" alt="Print do combo misto no visualizador"><span>Combo misto embarcando.</span></div>
+          <div class="shot"><img src="assets/screenshots/atravessando.png" alt="Print do barco atravessando o rio"><span>Barco atravessando o rio.</span></div>
+          <div class="shot"><img src="assets/screenshots/fim.png" alt="Print da tela final do visualizador"><span>Execução concluída.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="LLM e fechamento">
+      <div class="topline">
+        <h2>O que foi feito, aprendido e demonstrado</h2>
+        <div class="section-tag">13 | Fechamento</div>
+      </div>
+      <div class="content closing">
+        <div class="panel">
+          <h3>Uso crítico de LLMs</h3>
+          <ul class="note-list" style="margin-top: 18px;">
+            <li>Revisão de conceitos de sincronização.</li>
+            <li>Ajuda para escolher e formular o problema criativo.</li>
+            <li>Apoio na UI Pygame, com limites: recortes e ajustes precisaram ser manuais.</li>
+            <li>Apoio na elaboração desta apresentação HTML.</li>
+          </ul>
+        </div>
+        <div class="panel dark-panel">
+          <h3>Demo sugerida</h3>
+          <span class="command">./run.sh --raposas 4 --ovelhas 4 --fazendeiros 1 --seed 1 &gt; runs/mixed.jsonl 2&gt; runs/mixed.log</span>
+          <span class="command">python -m ui.main -i runs/mixed.jsonl</span>
+          <p style="margin-top: 18px;">A versão maior em <code>runs/demo.jsonl</code> mostra a execução completa com 6 viagens.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="nav" aria-label="Controles da apresentação">
+    <button type="button" id="prev" aria-label="Slide anterior">←</button>
+    <span><span id="current">1</span> / <span id="total">14</span></span>
+    <button type="button" id="next" aria-label="Proximo slide">→</button>
+  </nav>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const currentEl = document.getElementById('current');
+    const totalEl = document.getElementById('total');
+    const progressEl = document.getElementById('progress');
+    let current = 0;
+
+    totalEl.textContent = String(slides.length);
+
+    function showSlide(index) {
+      current = Math.max(0, Math.min(index, slides.length - 1));
+      slides.forEach((slide, i) => slide.classList.toggle('active', i === current));
+      currentEl.textContent = String(current + 1);
+      progressEl.style.width = `${((current + 1) / slides.length) * 100}%`;
+      const nextHash = `slide-${current + 1}`;
+      if (location.hash.slice(1) !== nextHash) {
+        history.replaceState(null, '', `#${nextHash}`);
+      }
+      if (slides[current]?.dataset.title === "Lambda") drawLambdaChart();
+    }
+
+    function nextSlide() { showSlide(current + 1); }
+    function prevSlide() { showSlide(current - 1); }
+
+    document.getElementById('next').addEventListener('click', nextSlide);
+    document.getElementById('prev').addEventListener('click', prevSlide);
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight' || event.key === ' ') {
+        event.preventDefault();
+        nextSlide();
+      }
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        prevSlide();
+      }
+      if (event.key === 'Home') showSlide(0);
+      if (event.key === 'End') showSlide(slides.length - 1);
+    });
+    document.getElementById('deck').addEventListener('click', (event) => {
+      if (!event.target.closest('a, button')) nextSlide();
+    });
+
+    function drawLambdaChart() {
+      const canvas = document.getElementById('lambdaChart');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const cssW = Math.max(320, Math.round(rect.width));
+      const cssH = Math.max(180, Math.round(rect.height));
+      if (canvas.width !== Math.round(cssW * dpr) || canvas.height !== Math.round(cssH * dpr)) {
+        canvas.width = Math.round(cssW * dpr);
+        canvas.height = Math.round(cssH * dpr);
+      }
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const w = cssW;
+      const h = cssH;
+      const pad = { left: 56, right: 20, top: 24, bottom: 42 };
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.fillStyle = '#fff9e6';
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = 'rgba(31,42,32,.18)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 6; i++) {
+        const y = pad.top + (h - pad.top - pad.bottom) * i / 6;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(w - pad.right, y);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = '#1f2a20';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(pad.left, pad.top);
+      ctx.lineTo(pad.left, h - pad.bottom);
+      ctx.lineTo(w - pad.right, h - pad.bottom);
+      ctx.stroke();
+
+      const lambdas = [
+        { value: 0.3, color: '#2c6f91' },
+        { value: 0.5, color: '#c56b35' },
+        { value: 1.0, color: '#e3ad3d' },
+      ];
+      const maxX = 6;
+      const maxY = 1;
+      const plotW = w - pad.left - pad.right;
+      const plotH = h - pad.top - pad.bottom;
+      const xFor = (x) => pad.left + (x / maxX) * plotW;
+      const yFor = (y) => h - pad.bottom - (y / maxY) * plotH;
+
+      lambdas.forEach(({ value, color }) => {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        for (let i = 0; i <= 180; i++) {
+          const x = maxX * i / 180;
+          const y = value * Math.exp(-value * x);
+          const px = xFor(x);
+          const py = yFor(y);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+      });
+
+      ctx.fillStyle = '#1f2a20';
+      ctx.font = '13px Menlo, Monaco, Consolas, monospace';
+      ctx.fillText('densidade do intervalo ate a chegada', pad.left + 8, 24);
+      ctx.font = '12px Menlo, Monaco, Consolas, monospace';
+      ctx.fillText('tempo entre chegadas', w - 250, h - 14);
+      ctx.save();
+      ctx.translate(22, h - pad.bottom - 10);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText('probabilidade relativa', 0, 0);
+      ctx.restore();
+    }
+
+    function initialSlideFromHash() {
+      const match = location.hash.match(/slide-(\d+)/);
+      if (!match) return 0;
+      return Math.max(0, Math.min(Number(match[1]) - 1, slides.length - 1));
+    }
+
+    window.addEventListener('hashchange', () => showSlide(initialSlideFromHash()));
+    window.addEventListener('resize', () => {
+      if (slides[current]?.dataset.title === "Lambda") drawLambdaChart();
+    });
+    showSlide(initialSlideFromHash());
+  </script>
+</body>
+</html>

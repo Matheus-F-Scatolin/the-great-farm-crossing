@@ -2,7 +2,7 @@
 farm_crossing
 src/*.o
 
-# Gravacoes JSONL da simulacao (UI futura)
+# Gravacoes JSONL da simulacao
 runs/*.jsonl
 runs/*.log
 

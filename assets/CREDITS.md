@@ -2,7 +2,7 @@
 
 Visual assets for **The Great Farm Crossing** (future UI / replay viewer).
 
-Recommended scale: **32×32** (use the `vectoraith/32x32/` folder). See `handoff.md` section 7 for tileset and sprite mapping.
+Recommended scale: **32×32** (use the `vectoraith/32x32/` folder). Sprite and tileset paths are listed in the tables below.
 
 ---
 

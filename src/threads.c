@@ -107,6 +107,13 @@ static int simulacao_terminou(void) {
            g_farm.fazendeiros_direita >= g_farm.total_fazendeiros;
 }
 
+/*
+ * Ciclo de vida de cada passageiro (padrao lider–seguidor):
+ * 1) chegada estocastica e entrada na fila;
+ * 2) espera em cond_embarque ate reservar slot (lider forma combo ou seguidor entra);
+ * 3) barreira de 3 embarques antes da viagem;
+ * 4) lider chama atravessar_rio() sem mutex; seguidores aguardam cond_viagem.
+ */
 void *passageiro_thread(void *arg) {
     PassageiroArg *p = (PassageiroArg *)arg;
     int id = p->id;
@@ -132,12 +139,14 @@ void *passageiro_thread(void *arg) {
     int embarcou = 0;
 
     while (!embarcou && g_farm.simulacao_ativa) {
+        /* Barco vazio na margem esquerda: tentativa de formar um novo combo como lider. */
         if (g_farm.barco_ocupacao == 0 && g_farm.barco_lado == LADO_ESQUERDA) {
             if (try_form_combo_as_leader(id, tipo)) {
                 sou_lider = 1;
                 embarcou = 1;
                 break;
             }
+        /* Combo ja reservado: seguidores reivindicam slots restantes do tipo deles. */
         } else if (g_farm.barco_ocupacao == 3 && g_farm.trip_boarded < 3) {
             if (try_claim_boarding_slot(tipo, id)) {
                 embarcou = 1;
@@ -149,7 +158,6 @@ void *passageiro_thread(void *arg) {
             visor_log("[Erro] Deadlock: fila r=%d o=%d f=%d nao forma combo valido\n",
                       g_farm.raposas_fila, g_farm.ovelhas_fila, g_farm.fazendeiros_fila);
             g_farm.simulacao_ativa = 0;
-            visor_emit_fim();
             pthread_cond_broadcast(&g_cond_embarque);
             pthread_cond_broadcast(&g_cond_viagem);
             break;
@@ -179,6 +187,7 @@ void *passageiro_thread(void *arg) {
     int trip_f = g_farm.fazendeiros_barco;
 
     if (sou_lider) {
+        /* Animacao/travessia fora da secao critica para nao bloquear as outras threads. */
         pthread_mutex_unlock(&g_mutex);
         atravessar_rio(id, trip_r, trip_o, trip_f);
         pthread_mutex_lock(&g_mutex);
@@ -201,7 +210,6 @@ void *passageiro_thread(void *arg) {
 
         if (simulacao_terminou()) {
             g_farm.simulacao_ativa = 0;
-            visor_emit_fim();
         }
 
         pthread_cond_broadcast(&g_cond_viagem);

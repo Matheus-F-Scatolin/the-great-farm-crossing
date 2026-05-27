@@ -8,6 +8,7 @@
 typedef enum { LADO_ESQUERDA, LADO_DIREITA } LadoBarco;
 typedef enum { TIPO_RAPOSA, TIPO_OVELHA, TIPO_FAZENDEIRO } TipoPassageiro;
 
+/* Estado compartilhado protegido por g_mutex (fila esquerda, barco, margem direita). */
 typedef struct {
     int raposas_fila;
     int ovelhas_fila;

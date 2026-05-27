@@ -1,4 +1,4 @@
-"""JSONL event parser. Mirrors handoff section 5."""
+"""JSONL event parser for farm_crossing stdout events."""
 
 from __future__ import annotations
 

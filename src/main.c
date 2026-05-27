@@ -113,6 +113,7 @@ int main(int argc, char **argv) {
     srand(cfg.seed);
     farm_init(&cfg);
 
+    /* Uma thread por passageiro; todas compartilham g_farm via passageiro_thread(). */
     int total = cfg.raposas + cfg.ovelhas + cfg.fazendeiros;
     pthread_t *threads = calloc((size_t)total, sizeof(pthread_t));
     if (!threads) {
