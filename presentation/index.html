@@ -670,18 +670,217 @@
     .flow {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
+      gap: 20px;
+      position: relative;
     }
 
     .flow-step {
-      min-height: 190px;
-      display: grid;
-      align-content: space-between;
-      gap: 10px;
+      position: relative;
+      min-height: 230px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       padding: 16px;
       border: 3px solid #2b352b;
-      background: rgba(255,249,230,.82);
-      box-shadow: 6px 6px 0 rgba(31,42,32,.12);
+      border-top: 8px solid var(--accent, #2b352b);
+      background: rgba(255, 249, 230, 0.9);
+      box-shadow: 6px 6px 0 rgba(31, 42, 32, 0.15);
+      border-radius: 4px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .flow-step:hover {
+      transform: translateY(-4px);
+      box-shadow: 8px 10px 0 rgba(31, 42, 32, 0.18);
+    }
+
+    .flow-step.step-1 {
+      --accent: var(--grass);
+      --scene-bg: rgba(79, 126, 74, 0.08);
+      --scene-border: rgba(79, 126, 74, 0.25);
+    }
+    .flow-step.step-2 {
+      --accent: var(--gold);
+      --scene-bg: rgba(227, 173, 61, 0.08);
+      --scene-border: rgba(227, 173, 61, 0.25);
+    }
+    .flow-step.step-3 {
+      --accent: var(--river);
+      --scene-bg: rgba(79, 155, 194, 0.12);
+      --scene-border: rgba(79, 155, 194, 0.25);
+    }
+    .flow-step.step-4 {
+      --accent: var(--fox);
+      --scene-bg: rgba(197, 107, 53, 0.08);
+      --scene-border: rgba(197, 107, 53, 0.25);
+    }
+    .flow-step.step-5 {
+      --accent: var(--wood);
+      --scene-bg: rgba(123, 78, 47, 0.08);
+      --scene-border: rgba(123, 78, 47, 0.25);
+    }
+
+    .flow-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .flow-step b {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--accent, var(--fox));
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .flow-step .step-num {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--accent, var(--muted));
+      opacity: 0.5;
+    }
+
+    .flow-scene {
+      height: 100px;
+      position: relative;
+      background: var(--scene-bg, rgba(31, 42, 32, 0.04));
+      border: 2px dashed var(--scene-border, rgba(31, 42, 32, 0.15));
+      border-radius: 4px;
+      margin: 8px 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    /* River bed at the bottom */
+    .flow-scene::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 12px;
+      background: var(--river-dark, #2c6f91);
+      opacity: 0.35;
+      z-index: 1;
+    }
+
+    .scene-land {
+      position: absolute;
+      bottom: 0;
+      height: 14px;
+      background: var(--grass-dark, #2f5539);
+      border-top: 3px solid var(--grass, #4f7e4a);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      z-index: 2;
+      overflow: visible;
+    }
+
+    .scene-land.left {
+      left: 0;
+      width: 35px;
+      border-top-right-radius: 4px;
+    }
+
+    .scene-land.right {
+      right: 0;
+      width: 35px;
+      border-top-left-radius: 4px;
+    }
+
+    /* For step 5, make the right land wider to fit 3 characters */
+    .flow-step.step-5 .scene-land.right {
+      width: 55px;
+    }
+
+    .scene-land .sprite {
+      height: 24px !important;
+      width: auto !important;
+      margin-bottom: 11px;
+      filter: drop-shadow(1px 2px 0 rgba(31, 42, 32, 0.15));
+    }
+
+    /* Overlap sprites slightly in step 5 right land so they fit perfectly */
+    .flow-step.step-5 .scene-land.right .sprite {
+      margin-left: -6px;
+    }
+    .flow-step.step-5 .scene-land.right .sprite:first-child {
+      margin-left: 0;
+    }
+
+    /* The boat and crew container */
+    .scene-boat-dock {
+      position: absolute;
+      bottom: 4px;
+      width: 75px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 3;
+    }
+
+    .scene-boat-dock.left {
+      left: 28px;
+    }
+
+    .scene-boat-dock.middle {
+      left: calc(50% - 37.5px);
+    }
+
+    .scene-boat-dock.middle-left {
+      left: calc(40% - 37.5px);
+    }
+
+    .scene-boat-dock.right {
+      right: 28px;
+    }
+
+    .scene-crew {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 1px;
+      height: 24px;
+      transform: translateY(8px); /* Overlap inside the boat */
+      z-index: 4;
+    }
+
+    .scene-crew .sprite {
+      height: 22px !important;
+      width: auto !important;
+    }
+
+    .scene-boat-dock .sprite.boat {
+      width: 75px !important;
+      height: auto !important;
+      z-index: 3;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.3;
+      margin-top: auto;
+    }
+
+    /* Connection arrows between steps */
+    .flow-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -21px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--mono);
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--muted);
+      opacity: 0.6;
+      z-index: 10;
+      pointer-events: none;
     }
 
     .flow-step b, .rule b, .module b, .state-cell b {
@@ -1203,7 +1402,6 @@ while (!embarcou) {
           </ul>
           <div class="sprites" style="margin-top: 22px;">
             <img class="sprite boat" src="../assets/boat/boat_to_the_right.png" alt="">
-            <img class="sprite dirt" src="../assets/vectoraith/32x32/Tilesets%20(Compact)/dirt.png" alt="">
           </div>
         </div>
       </div>
@@ -1266,11 +1464,103 @@ while (!embarcou) {
       </div>
       <div class="content">
         <div class="flow">
-          <div class="flow-step"><b>CHEGOU</b><img class="sprite sheep" src="assets/sprites/sheep.png" alt=""><span>Thread entra na fila.</span></div>
-          <div class="flow-step"><b>EMBARQUE</b><img class="sprite boat" src="../assets/boat/boat_to_the_right.png" alt=""><span>Combo é reservado e slots são reivindicados.</span></div>
-          <div class="flow-step"><b>PARTIDA</b><img class="sprite boat" src="../assets/boat/boat_to_the_right.png" alt=""><span>Líder inicia a animação temporal.</span></div>
-          <div class="flow-step"><b>DESEMBARQUE</b><div class="sprites"><img class="sprite fox" src="assets/sprites/fox.png" alt=""><img class="sprite farmer" src="assets/sprites/farmer.png" alt=""></div><span>Passageiros chegam à direita.</span></div>
-          <div class="flow-step"><b>RETORNO</b><img class="sprite boat" src="../assets/boat/boat_to_the_left.png" alt=""><span>Barco volta vazio para a esquerda.</span></div>
+          <div class="flow-step step-1">
+            <div class="flow-header">
+              <b>Chegou</b>
+              <span class="step-num">01</span>
+            </div>
+            <div class="flow-scene">
+              <div class="scene-land left">
+                <img class="sprite sheep" src="assets/sprites/sheep.png" alt="">
+              </div>
+              <div class="scene-boat-dock left">
+                <img class="sprite boat" src="../assets/boat/boat_to_the_right.png" alt="">
+              </div>
+              <div class="scene-land right"></div>
+            </div>
+            <span>Thread entra na fila.</span>
+          </div>
+
+          <div class="flow-step step-2">
+            <div class="flow-header">
+              <b>Embarque</b>
+              <span class="step-num">02</span>
+            </div>
+            <div class="flow-scene">
+              <div class="scene-land left">
+                <img class="sprite farmer" src="assets/sprites/farmer.png" alt="">
+              </div>
+              <div class="scene-boat-dock left">
+                <div class="scene-crew">
+                  <img class="sprite fox" src="assets/sprites/fox.png" alt="">
+                  <img class="sprite sheep" src="assets/sprites/sheep.png" alt="">
+                </div>
+                <img class="sprite boat" src="../assets/boat/boat_to_the_right.png" alt="">
+              </div>
+              <div class="scene-land right"></div>
+            </div>
+            <span>Combo é reservado e slots são reivindicados.</span>
+          </div>
+
+          <div class="flow-step step-3">
+            <div class="flow-header">
+              <b>Partida</b>
+              <span class="step-num">03</span>
+            </div>
+            <div class="flow-scene">
+              <div class="scene-land left"></div>
+              <div class="scene-boat-dock middle">
+                <div class="scene-crew">
+                  <img class="sprite fox" src="assets/sprites/fox.png" alt="">
+                  <img class="sprite sheep" src="assets/sprites/sheep.png" alt="">
+                  <img class="sprite farmer" src="assets/sprites/farmer.png" alt="">
+                </div>
+                <img class="sprite boat" src="../assets/boat/boat_to_the_right.png" alt="">
+              </div>
+              <div class="scene-land right"></div>
+            </div>
+            <span>Líder inicia a animação temporal.</span>
+          </div>
+
+          <div class="flow-step step-4">
+            <div class="flow-header">
+              <b>Desembarque</b>
+              <span class="step-num">04</span>
+            </div>
+            <div class="flow-scene">
+              <div class="scene-land left"></div>
+              <div class="scene-boat-dock right">
+                <div class="scene-crew">
+                  <img class="sprite fox" src="assets/sprites/fox.png" alt="">
+                  <img class="sprite farmer" src="assets/sprites/farmer.png" alt="">
+                </div>
+                <img class="sprite boat" src="../assets/boat/boat_to_the_right.png" alt="">
+              </div>
+              <div class="scene-land right">
+                <img class="sprite sheep" src="assets/sprites/sheep.png" alt="">
+              </div>
+            </div>
+            <span>Passageiros chegam à direita.</span>
+          </div>
+
+          <div class="flow-step step-5">
+            <div class="flow-header">
+              <b>Retorno</b>
+              <span class="step-num">05</span>
+            </div>
+            <div class="flow-scene">
+              <div class="scene-land left"></div>
+              <div class="scene-boat-dock middle-left">
+                <img class="sprite boat" src="../assets/boat/boat_to_the_left.png" alt="">
+              </div>
+              <div class="scene-land right">
+                <img class="sprite fox" src="assets/sprites/fox.png" alt="">
+                <img class="sprite sheep" src="assets/sprites/sheep.png" alt="">
+                <img class="sprite farmer" src="assets/sprites/farmer.png" alt="">
+              </div>
+            </div>
+            <span>Barco volta vazio para a esquerda.</span>
+          </div>
         </div>
       </div>
     </section>
