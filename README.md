@@ -4,6 +4,12 @@ Animação multithread desenvolvida como projeto prático para a disciplina **MC
 
 O projeto consiste de uma aplicação concorrente robusta implementada em **C (Pthreads)** e de um visualizador desacoplado em **Python (Pygame)**. O motor físico e a interface comunicam-se via protocolo de eventos **JSONL** em `stdout`.
 
+<p align="center">
+  <img src="presentation/assets/screenshots/atravessando.png" alt="Gameplay — barco atravessando o rio com 3 ovelhas" width="720">
+  <br>
+  <em>Visualizador Pygame: barco atravessando o rio com 3 ovelhas a bordo.</em>
+</p>
+
 ---
 
 ## 📚 Inspirações e Formulação
@@ -15,7 +21,17 @@ O projeto consiste de uma aplicação concorrente robusta implementada em **C (P
 
 ## 📝 O Problema
 
-Na margem esquerda de um rio, chegam de forma independente e assíncrona três tipos de personagens. Um barco com capacidade para **exatamente 3 passageiros** realiza a travessia. Para evitar que hajam mortes, o embarque deve respeitar um **predicado de segurança rigoroso**:
+Na margem esquerda de um rio, chegam de forma independente e assíncrona três tipos de personagens:
+
+<p align="center">
+  <img src="presentation/assets/sprites/fox.png" alt="Raposa" width="48">&nbsp;&nbsp;&nbsp;
+  <img src="presentation/assets/sprites/sheep.png" alt="Ovelha" width="48">&nbsp;&nbsp;&nbsp;
+  <img src="presentation/assets/sprites/farmer.png" alt="Fazendeiro" width="48">
+  <br>
+  <em>Raposa · Ovelha · Fazendeiro</em>
+</p>
+
+Um barco com capacidade para **exatamente 3 passageiros** realiza a travessia. Para evitar que hajam mortes, o embarque deve respeitar um **predicado de segurança rigoroso**:
 
 * **Combinações Homogêneas (Válidas):** 
   * 3 Raposas (elas não brigam entre si no barco).
