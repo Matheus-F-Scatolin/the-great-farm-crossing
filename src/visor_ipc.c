@@ -1,3 +1,6 @@
+#define _DEFAULT_SOURCE
+#define _XOPEN_SOURCE 600
+
 #include "visor_ipc.h"
 
 #include <stdarg.h>
@@ -5,6 +8,11 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#define usleep(us) Sleep((us) / 1000)
+#endif
 
 static long long visor_ts_ms(void) {
     struct timespec ts;
@@ -28,23 +36,23 @@ static void emit_json_ex(const char *evt, TipoPassageiro who, int id, int dur_ms
             "\"fila\":{\"r\":%d,\"o\":%d,\"f\":%d},"
             "\"barco\":{\"r\":%d,\"o\":%d,\"f\":%d,\"lado\":\"%s\",\"ocupacao\":%d},"
             "\"direita\":{\"r\":%d,\"o\":%d,\"f\":%d},"
-            "\"cruzes\":%d,\"ts\":%lld}\n",
+            "\"travessias_completas\":%d,\"ts\":%lld}\n",
             evt, who_str, id, dur_ms, g_farm.raposas_fila, g_farm.ovelhas_fila,
             g_farm.fazendeiros_fila, g_farm.raposas_barco, g_farm.ovelhas_barco,
             g_farm.fazendeiros_barco, lado_str(g_farm.barco_lado), g_farm.barco_ocupacao,
             g_farm.raposas_direita, g_farm.ovelhas_direita, g_farm.fazendeiros_direita,
-            g_farm.cruzes_feitas, visor_ts_ms());
+            g_farm.travessias_completas_feitas, visor_ts_ms());
     } else {
         printf(
             "{\"evt\":\"%s\",\"who\":\"%s\",\"id\":%d,"
             "\"fila\":{\"r\":%d,\"o\":%d,\"f\":%d},"
             "\"barco\":{\"r\":%d,\"o\":%d,\"f\":%d,\"lado\":\"%s\",\"ocupacao\":%d},"
             "\"direita\":{\"r\":%d,\"o\":%d,\"f\":%d},"
-            "\"cruzes\":%d,\"ts\":%lld}\n",
+            "\"travessias_completas\":%d,\"ts\":%lld}\n",
             evt, who_str, id, g_farm.raposas_fila, g_farm.ovelhas_fila, g_farm.fazendeiros_fila,
             g_farm.raposas_barco, g_farm.ovelhas_barco, g_farm.fazendeiros_barco,
             lado_str(g_farm.barco_lado), g_farm.barco_ocupacao, g_farm.raposas_direita,
-            g_farm.ovelhas_direita, g_farm.fazendeiros_direita, g_farm.cruzes_feitas,
+            g_farm.ovelhas_direita, g_farm.fazendeiros_direita, g_farm.travessias_completas_feitas,
             visor_ts_ms());
     }
     fflush(stdout);
@@ -77,7 +85,7 @@ void visor_log(const char *fmt, ...) {
 
 static void sleep_ms(int ms) {
     if (ms > 0) {
-        usleep((useconds_t)ms * 1000);
+        usleep((unsigned int)ms * 1000);
     }
 }
 

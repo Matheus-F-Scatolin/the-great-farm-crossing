@@ -21,11 +21,11 @@ static void print_usage(const char *prog) {
             "  --boat-speed-ms N     Duracao da travessia em ms (default %d)\n"
             "  --embark-ms N         Pausa entre embarques/desembarques (default %d)\n"
             "  --return-ms N         Duracao do retorno vazio (default %d)\n"
-            "  --max-cruzes N        Limite de viagens (0=sem limite, default %d)\n"
+            "  --max-travessias-completas N Limite de viagens (0=sem limite, default %d)\n"
             "  --no-vis              Desliga JSON no stdout (logs em stderr)\n",
             prog, DEFAULT_RAPOSAS, DEFAULT_OVELHAS, DEFAULT_FAZENDEIROS, DEFAULT_LAMBDA_RAPOSA,
             DEFAULT_LAMBDA_OVELHA, DEFAULT_LAMBDA_FAZENDEIRO, DEFAULT_SEED, DEFAULT_BOAT_SPEED_MS,
-            DEFAULT_EMBARK_MS, DEFAULT_RETURN_MS, DEFAULT_MAX_CRUZES);
+            DEFAULT_EMBARK_MS, DEFAULT_RETURN_MS, DEFAULT_MAX_TRAVESSIAS_COMPLETAS);
 }
 
 static int parse_args(int argc, char **argv, SimConfig *cfg) {
@@ -40,7 +40,7 @@ static int parse_args(int argc, char **argv, SimConfig *cfg) {
         {"boat-speed-ms", required_argument, 0, 1003},
         {"embark-ms", required_argument, 0, 1004},
         {"return-ms", required_argument, 0, 1005},
-        {"max-cruzes", required_argument, 0, 1006},
+        {"max-travessias-completas", required_argument, 0, 1006},
         {"no-vis", no_argument, 0, 1007},
         {"help", no_argument, 0, 'h'},
         {0, 0, 0, 0},
@@ -80,7 +80,7 @@ static int parse_args(int argc, char **argv, SimConfig *cfg) {
             cfg->return_ms = atoi(optarg);
             break;
         case 1006:
-            cfg->max_cruzes = atoi(optarg);
+            cfg->max_travessias_completas = atoi(optarg);
             break;
         case 1007:
             cfg->no_vis = 1;
@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
         pthread_join(threads[t], NULL);
     }
 
-    visor_log("Simulacao finalizada. Cruzes: %d\n", g_farm.cruzes_feitas);
+    visor_log("Simulacao finalizada. Travessias completas: %d\n", g_farm.travessias_completas_feitas);
     if (!cfg.no_vis) {
         visor_emit_fim();
     }

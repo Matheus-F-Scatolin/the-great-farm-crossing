@@ -12,7 +12,7 @@ typedef struct {
     int boat_speed_ms;
     int embark_ms;
     int return_ms;
-    int max_cruzes;
+    int max_travessias_completas;
     int no_vis;
 } SimConfig;
 
@@ -26,7 +26,7 @@ typedef struct {
 #define DEFAULT_BOAT_SPEED_MS 1200
 #define DEFAULT_EMBARK_MS 200
 #define DEFAULT_RETURN_MS 800
-#define DEFAULT_MAX_CRUZES 0
+#define DEFAULT_MAX_TRAVESSIAS_COMPLETAS 0
 
 static inline void config_init_defaults(SimConfig *cfg) {
     cfg->raposas = DEFAULT_RAPOSAS;
@@ -39,7 +39,7 @@ static inline void config_init_defaults(SimConfig *cfg) {
     cfg->boat_speed_ms = DEFAULT_BOAT_SPEED_MS;
     cfg->embark_ms = DEFAULT_EMBARK_MS;
     cfg->return_ms = DEFAULT_RETURN_MS;
-    cfg->max_cruzes = DEFAULT_MAX_CRUZES;
+    cfg->max_travessias_completas = DEFAULT_MAX_TRAVESSIAS_COMPLETAS;
     cfg->no_vis = 0;
 }
 

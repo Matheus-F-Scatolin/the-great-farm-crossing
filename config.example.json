@@ -9,5 +9,5 @@
   "boat_speed_ms": 1200,
   "embark_ms": 200,
   "return_ms": 800,
-  "max_cruzes": 0
+  "max_travessias_completas": 0
 }

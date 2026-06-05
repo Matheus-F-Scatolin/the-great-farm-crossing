@@ -1,9 +1,17 @@
+#define _DEFAULT_SOURCE
+#define _XOPEN_SOURCE 600
+
 #include "threads.h"
 
 #include <math.h>
 #include <pthread.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#define usleep(us) Sleep((us) / 1000)
+#endif
 
 #include "visor_ipc.h"
 
@@ -29,7 +37,7 @@ static void sleep_arrival_delay(TipoPassageiro tipo) {
         u = 0.0001;
     }
     double delay = -log(u) / lambda;
-    usleep((useconds_t)(delay * 1000000.0));
+    usleep((unsigned int)(delay * 1000000.0));
 }
 
 static void increment_fila(TipoPassageiro tipo) {
@@ -85,7 +93,7 @@ static int try_form_combo_as_leader(int id, TipoPassageiro tipo) {
     if (!combo_inclui_tipo(r, o, f, tipo)) {
         return 0;
     }
-    if (g_config.max_cruzes > 0 && g_farm.cruzes_feitas >= g_config.max_cruzes) {
+    if (g_config.max_travessias_completas > 0 && g_farm.travessias_completas_feitas >= g_config.max_travessias_completas) {
         return 0;
     }
 
@@ -195,7 +203,7 @@ void *passageiro_thread(void *arg) {
         g_farm.raposas_direita += trip_r;
         g_farm.ovelhas_direita += trip_o;
         g_farm.fazendeiros_direita += trip_f;
-        g_farm.cruzes_feitas++;
+        g_farm.travessias_completas_feitas++;
 
         g_farm.raposas_barco = 0;
         g_farm.ovelhas_barco = 0;
@@ -205,7 +213,7 @@ void *passageiro_thread(void *arg) {
         g_farm.trip_leader_id = -1;
 
         visor_log("[Desembarque] viagem %d concluida. Direita r=%d o=%d f=%d\n",
-                  g_farm.cruzes_feitas, g_farm.raposas_direita, g_farm.ovelhas_direita,
+                  g_farm.travessias_completas_feitas, g_farm.raposas_direita, g_farm.ovelhas_direita,
                   g_farm.fazendeiros_direita);
 
         if (simulacao_terminou()) {

@@ -137,7 +137,7 @@ def _draw_hud(
         f"Fila R{state.fila.r} O{state.fila.o} F{state.fila.f}  |  "
         f"Barco R{state.barco.r} O{state.barco.o} F{state.barco.f} ({state.barco.lado})  |  "
         f"Direita R{state.direita.r} O{state.direita.o} F{state.direita.f}  |  "
-        f"Viagens: {state.cruzes}"
+        f"Travessias completas: {state.travessias_completas}"
     )
     counters_surf = small.render(counters, True, PANEL_DIM)
     surface.blit(counters_surf, (16, 28))
@@ -164,7 +164,7 @@ def _draw_fim_overlay(surface: pygame.Surface, state: UIState, font_big: pygame.
     overlay.fill((0, 0, 0, 140))
     surface.blit(overlay, (0, 0))
     msg = font_big.render("FIM", True, ACCENT)
-    sub = font.render(f"{state.cruzes} viagens", True, PANEL_FG)
+    sub = font.render(f"{state.travessias_completas} travessias completas", True, PANEL_FG)
     surface.blit(msg, ((WINDOW_W - msg.get_width()) // 2, WINDOW_H // 2 - 40))
     surface.blit(sub, ((WINDOW_W - sub.get_width()) // 2, WINDOW_H // 2 + 16))
 

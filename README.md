@@ -8,14 +8,14 @@ O projeto consiste de uma aplicação concorrente robusta implementada em **C (P
 
 ## 📚 Inspirações e Formulação
 
-1. ***The Little Book of Semaphores*** (Allen B. Downey) — O problema clássico da travessia de rio (*River Crossing Problem*), onde threads de diferentes tipos precisam cooperar em grupos de tamanho fixo para cruzar um obstáculo compartilhado.
-2. **O Problema do Lobo, da Cabra e do Repolho** (Enigma medieval de Alcuin de York, *Propositiones ad Acuendos Juvenes*) — Adaptado para um ecossistema concorrente moderno composto de três filas concorrentes: **Ovelhas**, **Raposas** e **Fazendeiros**. 
+1. ***The Little Book of Semaphores*** (Allen B. Downey): O problema clássico da travessia de rio (*River Crossing Problem*), onde threads de diferentes tipos precisam cooperar em grupos de tamanho fixo para cruzar um obstáculo compartilhado.
+2. **O Problema do Lobo, da Cabra e do Repolho** (Enigma medieval de Alcuin de York, *Propositiones ad Acuendos Juvenes*): Adaptado para um ecossistema concorrente moderno composto de três filas concorrentes: **Ovelhas**, **Raposas** e **Fazendeiros**. 
 
 ---
 
 ## 📝 O Problema
 
-Na margem esquerda de um rio, chegam de forma independente e assíncrona três tipos de personagens. Um barco com capacidade para **exatamente 3 passageiros** realiza a travessia. Para evitar que os animais se devorem, o embarque deve respeitar um **predicado de segurança rigoroso**:
+Na margem esquerda de um rio, chegam de forma independente e assíncrona três tipos de personagens. Um barco com capacidade para **exatamente 3 passageiros** realiza a travessia. Para evitar que hajam mortes, o embarque deve respeitar um **predicado de segurança rigoroso**:
 
 * **Combinações Homogêneas (Válidas):** 
   * 3 Raposas (elas não brigam entre si no barco).
@@ -53,7 +53,7 @@ A coordenação de cada viagem é descentralizada e dinâmica:
 1. **Formação de Combo:** Cada thread, ao chegar e obter o mutex, verifica se o barco está vazio e na margem esquerda. Se sim, ela tenta encontrar um combo válido de 3 elementos a partir das threads presentes na fila (usando uma ordem de busca determinística).
 2. **Eleição do Líder:** A thread que descobre um combo viável consome os personagens da fila, assume os 3 slots do barco e se autodeclara **Líder** daquela travessia. As outras duas threads do combo tornam-se **Seguidoras**.
 3. **Reserva e Embarque:** O líder sinaliza `g_cond_embarque`. As threads seguidoras do tipo selecionado acordam, reivindicam seus slots individuais no barco (`trip_boarded++`) e incrementam o contador de embarque.
-4. **Travessia Fora da Região Crítica:** Assim que o barco está completamente cheio (`trip_boarded == 3`), o líder **libera o mutex** (`g_mutex`) e chama a função `atravessar_rio()`. Realizar a travessia fora da seção crítica é uma excelente prática concorrente, pois evita congelar o nascimento de novas threads e o preenchimento de filas futuras enquanto o barco viaja.
+4. **Travessia Independente (Fora da Região Crítica):** Com o barco cheio (`trip_boarded == 3`), o líder **libera o mutex** (`g_mutex`) e realiza a travessia (`atravessar_rio()`). Isso permite que outras threads continuem chegando e se organizando na margem durante a viagem, sem bloquear o resto do sistema.
 5. **Barreira de Viagem:** Enquanto o líder viaja, os seguidores aguardam bloqueados na variável `g_cond_viagem`.
 6. **Conclusão:** Ao final da travessia física, o líder readquire o mutex, atualiza os contadores da margem direita, redefine o barco como vazio, acorda as threads seguidoras via `pthread_cond_broadcast(&g_cond_viagem)` e sinaliza `g_cond_embarque` para iniciar o próximo ciclo de viagem.
 
@@ -108,7 +108,7 @@ python -m ui.main -i runs/demo.jsonl
 | `--boat-speed-ms N` | Duração da travessia (ms); `dur_ms` em `PARTIDA` | 1200 |
 | `--embark-ms N` | Pausa entre embarques/desembarques no C | 200 |
 | `--return-ms N` | Duração do retorno; `dur_ms` em `RETORNO` | 800 |
-| `--max-cruzes N` | Limite de viagens (0 = sem limite) | 0 |
+| `--max-travessias-completas N` | Limite de viagens (0 = sem limite) | 0 |
 | `--no-vis` | Desliga JSON no stdout | off |
 
 > Combinações muito desbalanceadas podem deadlock. Demo estável: `6/9/3`.
@@ -143,7 +143,7 @@ python -m ui.main -i runs/demo.jsonl
 Uma linha JSON por evento em `stdout`:
 
 ```json
-{"evt":"EMBARQUE","who":"OVELHA","id":2,"fila":{"r":1,"o":3,"f":0},"barco":{"r":0,"o":1,"f":0,"lado":"ESQUERDA","ocupacao":3},"direita":{"r":0,"o":0,"f":0},"cruzes":0,"ts":1234}
+{"evt":"EMBARQUE","who":"OVELHA","id":2,"fila":{"r":1,"o":3,"f":0},"barco":{"r":0,"o":1,"f":0,"lado":"ESQUERDA","ocupacao":3},"direita":{"r":0,"o":0,"f":0},"travessias_completas":0,"ts":1234}
 ```
 
 Eventos: `CHEGOU`, `EMBARQUE`, `PARTIDA`, `ATRACOU`, `DESEMBARQUE`, `RETORNO`, `FIM`.

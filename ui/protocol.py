@@ -51,7 +51,7 @@ class Event:
     fila: Counts = field(default_factory=Counts)
     barco: Boat = field(default_factory=Boat)
     direita: Counts = field(default_factory=Counts)
-    cruzes: int = 0
+    travessias_completas: int = 0
     ts: int = 0
 
 
@@ -71,16 +71,24 @@ def parse_line(line: str) -> Event | None:
         fila=Counts.from_dict(d.get("fila")),
         barco=Boat.from_dict(d.get("barco")),
         direita=Counts.from_dict(d.get("direita")),
-        cruzes=int(d.get("cruzes", 0)),
+        travessias_completas=int(d.get("travessias_completas", d.get("cruzes", 0))),
         ts=int(d.get("ts", 0)),
     )
 
 
 def load_events(path: Path) -> list[Event]:
     out: list[Event] = []
-    with path.open("r", encoding="utf-8") as fh:
-        for line in fh:
-            ev = parse_line(line)
-            if ev is not None:
-                out.append(ev)
+    try:
+        # Tenta ler como UTF-8 (suporta UTF-8 com ou sem BOM)
+        with path.open("r", encoding="utf-8-sig") as fh:
+            lines = fh.readlines()
+    except UnicodeDecodeError:
+        # Se falhar (ex: gerado via redirecionamento '>' no PowerShell do Windows em UTF-16), lê como UTF-16
+        with path.open("r", encoding="utf-16") as fh:
+            lines = fh.readlines()
+
+    for line in lines:
+        ev = parse_line(line)
+        if ev is not None:
+            out.append(ev)
     return out

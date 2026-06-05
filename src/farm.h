@@ -21,7 +21,7 @@ typedef struct {
     int fazendeiros_direita;
     int barco_ocupacao;
     LadoBarco barco_lado;
-    int cruzes_feitas;
+    int travessias_completas_feitas;
     int simulacao_ativa;
     int trip_leader_id;
     int trip_boarded;

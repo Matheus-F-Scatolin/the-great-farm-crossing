@@ -1,6 +1,6 @@
 """Derived UI state from the latest applied event.
 
-Counters come straight from the event's `fila`, `barco`, `direita`, `cruzes`.
+Counters come straight from the event's `fila`, `barco`, `direita`, `travessias_completas`.
 Boat animation state tracks PARTIDA/RETORNO so the scene can interpolate the
 boat across the river over the duration the engine reported.
 """
@@ -26,7 +26,7 @@ class UIState:
     fila: Counts = field(default_factory=Counts)
     barco: Boat = field(default_factory=Boat)
     direita: Counts = field(default_factory=Counts)
-    cruzes: int = 0
+    travessias_completas: int = 0
     last_event: str = ""
     finished: bool = False
     boat_anim: BoatAnim = field(default_factory=BoatAnim)
@@ -34,7 +34,7 @@ class UIState:
     def apply(self, ev: Event, sim_now_ms: float) -> None:
         # Queue is always trustworthy from the latest event.
         self.fila = ev.fila
-        self.cruzes = ev.cruzes
+        self.travessias_completas = ev.travessias_completas
         self.last_event = ev.evt
 
         # `direita` is also lazy in the engine — it only catches up at the next
