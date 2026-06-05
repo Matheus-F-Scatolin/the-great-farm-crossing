@@ -1,0 +1,9 @@
+[project]
+name = "the-great-farm-crossing"
+version = "0.1.0"
+description = "Animação multithread da travessia da fazenda (MC504 - Sistemas Operacionais, UNICAMP)"
+requires-python = ">=3.12"
+dependencies = [
+    "pillow>=10",
+    "pygame-ce>=2.5,<3",
+]

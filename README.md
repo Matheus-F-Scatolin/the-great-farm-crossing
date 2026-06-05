@@ -87,11 +87,12 @@ Para resolver isso de forma elegante, o motor C possui um detector dinâmico de 
 
 - **gcc** com suporte a pthreads
 - **make**
-- **Python 3.10+** e **pygame-ce** (apenas para o visualizador)
+- [**uv**](https://docs.astral.sh/uv/) e **Python 3.12+** (apenas para o visualizador)
 
 ## Build e execução
 
 ```bash
+# Para compilar o projeto
 make
 
 # Simulação (JSON em stdout, logs em stderr)
@@ -104,9 +105,8 @@ make
 ./farm_crossing --no-vis --raposas 6 --ovelhas 9 --fazendeiros 3
 
 # Visualizador (requer display; instalar deps uma vez)
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-python -m ui.main -i runs/demo.jsonl
+uv sync
+uv run python -m ui.main -i runs/demo.jsonl
 # Controles: Espaço pausa, +/- velocidade, R reset, Esc sair
 ```
 
@@ -150,7 +150,7 @@ python -m ui.main -i runs/demo.jsonl
 ├── presentation/         # Slides e roteiro da apresentação acadêmica (HTML)
 ├── Makefile              # Automação do build do motor C
 ├── run.sh                # Script facilitador de execução e gravação de logs
-├── requirements.txt      # Dependências em Python (pygame-ce)
+├── pyproject.toml        # Dependências Python e metadados do projeto (uv)
 └── README.md             # Esta documentação
 ```
 

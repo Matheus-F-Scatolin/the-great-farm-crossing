@@ -1,80 +1,80 @@
 Iniciando simulacao: 6 raposas, 9 ovelhas, 3 fazendeiros (seed=42)
-[Fila] OVELHA 6 chegou. Fila r=0 o=1 f=0
-[Fila] OVELHA 12 chegou. Fila r=0 o=2 f=0
-[Fila] OVELHA 11 chegou. Fila r=0 o=3 f=0
-[Lider] OVELHA 11 formou combo (0,3,0)
-[Embarque] OVELHA 11 subiu no barco (1/3)
-[Embarque] OVELHA 6 subiu no barco (2/3)
-[Embarque] OVELHA 12 subiu no barco (3/3)
-[Lider] Iniciando travessia (0 raposas, 3 ovelhas, 0 fazendeiros)
-[Fila] RAPOSA 2 chegou. Fila r=1 o=0 f=0
-[Fila] RAPOSA 1 chegou. Fila r=2 o=0 f=0
-[Fila] OVELHA 8 chegou. Fila r=2 o=1 f=0
-[Fila] OVELHA 7 chegou. Fila r=2 o=2 f=0
-[Fila] RAPOSA 4 chegou. Fila r=3 o=2 f=0
-[Fila] OVELHA 13 chegou. Fila r=3 o=3 f=0
-[Fila] RAPOSA 3 chegou. Fila r=4 o=3 f=0
-[Fila] RAPOSA 5 chegou. Fila r=5 o=3 f=0
+[Fila] OVELHA 7 chegou. Fila r=0 o=1 f=0
+[Fila] OVELHA 11 chegou. Fila r=0 o=2 f=0
+[Fila] RAPOSA 2 chegou. Fila r=1 o=2 f=0
+[Fila] FAZENDEIRO 15 chegou. Fila r=1 o=2 f=1
+[Lider] FAZENDEIRO 15 formou combo (0,2,1)
+[Embarque] FAZENDEIRO 15 subiu no barco (1/3)
+[Embarque] OVELHA 7 subiu no barco (2/3)
+[Embarque] OVELHA 11 subiu no barco (3/3)
+[Lider] Iniciando travessia (0 raposas, 2 ovelhas, 1 fazendeiros)
+[Fila] OVELHA 6 chegou. Fila r=1 o=1 f=0
+[Fila] RAPOSA 3 chegou. Fila r=2 o=1 f=0
+[Fila] FAZENDEIRO 17 chegou. Fila r=2 o=1 f=1
+[Fila] RAPOSA 1 chegou. Fila r=3 o=1 f=1
+[Fila] OVELHA 10 chegou. Fila r=3 o=2 f=1
+[Fila] RAPOSA 5 chegou. Fila r=4 o=2 f=1
+[Fila] OVELHA 12 chegou. Fila r=4 o=3 f=1
+[Fila] OVELHA 8 chegou. Fila r=4 o=4 f=1
+[Fila] RAPOSA 4 chegou. Fila r=5 o=4 f=1
 [Lider] Travessia concluida
-[Desembarque] viagem 1 concluida. Direita r=0 o=3 f=0
+[Desembarque] viagem 1 concluida. Direita r=0 o=2 f=1
+[Desembarque] FAZENDEIRO 15 cruzou o rio com seguranca
+[Desembarque] OVELHA 7 cruzou o rio com seguranca
+[Lider] RAPOSA 3 formou combo (3,0,0)
+[Embarque] RAPOSA 3 subiu no barco (1/3)
 [Desembarque] OVELHA 11 cruzou o rio com seguranca
-[Desembarque] OVELHA 12 cruzou o rio com seguranca
-[Desembarque] OVELHA 6 cruzou o rio com seguranca
-[Lider] RAPOSA 2 formou combo (3,0,0)
-[Embarque] RAPOSA 2 subiu no barco (1/3)
-[Embarque] RAPOSA 1 subiu no barco (2/3)
-[Embarque] RAPOSA 4 subiu no barco (3/3)
+[Embarque] RAPOSA 5 subiu no barco (2/3)
+[Embarque] RAPOSA 1 subiu no barco (3/3)
 [Lider] Iniciando travessia (3 raposas, 0 ovelhas, 0 fazendeiros)
-[Fila] OVELHA 9 chegou. Fila r=2 o=4 f=0
-[Fila] OVELHA 14 chegou. Fila r=2 o=5 f=0
-[Fila] FAZENDEIRO 17 chegou. Fila r=2 o=5 f=1
-[Fila] FAZENDEIRO 15 chegou. Fila r=2 o=5 f=2
-[Fila] FAZENDEIRO 16 chegou. Fila r=2 o=5 f=3
-[Fila] OVELHA 10 chegou. Fila r=2 o=6 f=3
+[Fila] OVELHA 13 chegou. Fila r=2 o=5 f=1
+[Fila] OVELHA 14 chegou. Fila r=2 o=6 f=1
 [Lider] Travessia concluida
-[Desembarque] viagem 2 concluida. Direita r=3 o=3 f=0
-[Desembarque] RAPOSA 2 cruzou o rio com seguranca
+[Desembarque] viagem 2 concluida. Direita r=3 o=2 f=1
+[Desembarque] RAPOSA 3 cruzou o rio com seguranca
 [Lider] OVELHA 10 formou combo (0,3,0)
 [Embarque] OVELHA 10 subiu no barco (1/3)
-[Embarque] OVELHA 13 subiu no barco (2/3)
-[Embarque] OVELHA 14 subiu no barco (3/3)
-[Lider] Iniciando travessia (0 raposas, 3 ovelhas, 0 fazendeiros)
-[Desembarque] RAPOSA 4 cruzou o rio com seguranca
-[Desembarque] RAPOSA 1 cruzou o rio com seguranca
-[Lider] Travessia concluida
-[Desembarque] viagem 3 concluida. Direita r=3 o=6 f=0
-[Desembarque] OVELHA 10 cruzou o rio com seguranca
-[Desembarque] OVELHA 14 cruzou o rio com seguranca
-[Desembarque] OVELHA 13 cruzou o rio com seguranca
-[Lider] OVELHA 9 formou combo (0,3,0)
-[Embarque] OVELHA 9 subiu no barco (1/3)
-[Embarque] OVELHA 7 subiu no barco (2/3)
+[Embarque] OVELHA 14 subiu no barco (2/3)
+[Desembarque] RAPOSA 5 cruzou o rio com seguranca
 [Embarque] OVELHA 8 subiu no barco (3/3)
 [Lider] Iniciando travessia (0 raposas, 3 ovelhas, 0 fazendeiros)
+[Desembarque] RAPOSA 1 cruzou o rio com seguranca
+[Fila] RAPOSA 0 chegou. Fila r=3 o=3 f=1
+[Fila] FAZENDEIRO 16 chegou. Fila r=3 o=3 f=2
+[Fila] OVELHA 9 chegou. Fila r=3 o=4 f=2
 [Lider] Travessia concluida
-[Desembarque] viagem 4 concluida. Direita r=3 o=9 f=0
-[Desembarque] OVELHA 9 cruzou o rio com seguranca
+[Desembarque] viagem 3 concluida. Direita r=3 o=5 f=1
+[Desembarque] OVELHA 10 cruzou o rio com seguranca
 [Desembarque] OVELHA 8 cruzou o rio com seguranca
-[Desembarque] OVELHA 7 cruzou o rio com seguranca
-[Lider] FAZENDEIRO 15 formou combo (0,0,3)
-[Embarque] FAZENDEIRO 15 subiu no barco (1/3)
-[Embarque] FAZENDEIRO 16 subiu no barco (2/3)
-[Embarque] FAZENDEIRO 17 subiu no barco (3/3)
-[Lider] Iniciando travessia (0 raposas, 0 ovelhas, 3 fazendeiros)
-[Lider] Travessia concluida
-[Desembarque] viagem 5 concluida. Direita r=3 o=9 f=3
-[Desembarque] FAZENDEIRO 15 cruzou o rio com seguranca
-[Desembarque] FAZENDEIRO 17 cruzou o rio com seguranca
-[Desembarque] FAZENDEIRO 16 cruzou o rio com seguranca
-[Fila] RAPOSA 0 chegou. Fila r=3 o=0 f=0
-[Lider] RAPOSA 0 formou combo (3,0,0)
-[Embarque] RAPOSA 0 subiu no barco (1/3)
-[Embarque] RAPOSA 3 subiu no barco (2/3)
-[Embarque] RAPOSA 5 subiu no barco (3/3)
+[Desembarque] OVELHA 14 cruzou o rio com seguranca
+[Lider] RAPOSA 4 formou combo (3,0,0)
+[Embarque] RAPOSA 4 subiu no barco (1/3)
+[Embarque] RAPOSA 2 subiu no barco (2/3)
+[Embarque] RAPOSA 0 subiu no barco (3/3)
 [Lider] Iniciando travessia (3 raposas, 0 ovelhas, 0 fazendeiros)
 [Lider] Travessia concluida
-[Desembarque] viagem 6 concluida. Direita r=6 o=9 f=3
+[Desembarque] viagem 4 concluida. Direita r=6 o=5 f=1
+[Desembarque] RAPOSA 4 cruzou o rio com seguranca
+[Lider] OVELHA 12 formou combo (0,3,0)
+[Embarque] OVELHA 12 subiu no barco (1/3)
 [Desembarque] RAPOSA 0 cruzou o rio com seguranca
-[Desembarque] RAPOSA 5 cruzou o rio com seguranca
-[Desembarque] RAPOSA 3 cruzou o rio com seguranca
-Simulacao finalizada. Cruzes: 6
+[Embarque] OVELHA 13 subiu no barco (2/3)
+[Embarque] OVELHA 6 subiu no barco (3/3)
+[Desembarque] RAPOSA 2 cruzou o rio com seguranca
+[Lider] Iniciando travessia (0 raposas, 3 ovelhas, 0 fazendeiros)
+[Lider] Travessia concluida
+[Desembarque] viagem 5 concluida. Direita r=6 o=8 f=1
+[Desembarque] OVELHA 12 cruzou o rio com seguranca
+[Lider] OVELHA 9 formou combo (0,1,2)
+[Embarque] OVELHA 9 subiu no barco (1/3)
+[Desembarque] OVELHA 6 cruzou o rio com seguranca
+[Embarque] FAZENDEIRO 17 subiu no barco (2/3)
+[Embarque] FAZENDEIRO 16 subiu no barco (3/3)
+[Lider] Iniciando travessia (0 raposas, 1 ovelhas, 2 fazendeiros)
+[Desembarque] OVELHA 13 cruzou o rio com seguranca
+[Lider] Travessia concluida
+[Desembarque] viagem 6 concluida. Direita r=6 o=9 f=3
+[Desembarque] OVELHA 9 cruzou o rio com seguranca
+[Desembarque] FAZENDEIRO 16 cruzou o rio com seguranca
+[Desembarque] FAZENDEIRO 17 cruzou o rio com seguranca
+Simulacao finalizada. Travessias completas: 6
