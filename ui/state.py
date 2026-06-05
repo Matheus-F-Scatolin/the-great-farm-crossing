@@ -1,8 +1,8 @@
-"""Derived UI state from the latest applied event.
+"""Estado visual derivado do ultimo evento aplicado.
 
-Counters come straight from the event's `fila`, `barco`, `direita`, `travessias_completas`.
-Boat animation state tracks PARTIDA/RETORNO so the scene can interpolate the
-boat across the river over the duration the engine reported.
+Contadores vem diretamente dos campos `fila`, `barco`, `direita` do evento.
+A animacao do barco rastreia PARTIDA/RETORNO para que scene.py interpole
+a posicao do barco ao longo da duracao reportada pelo motor C.
 """
 
 from __future__ import annotations
@@ -14,6 +14,7 @@ from .protocol import Boat, Counts, Event
 
 @dataclass
 class BoatAnim:
+    """Parametros de animacao da travessia atual do barco."""
     moving: bool = False
     from_side: str = "ESQUERDA"   # "ESQUERDA" or "DIREITA"
     to_side: str = "ESQUERDA"
@@ -23,6 +24,7 @@ class BoatAnim:
 
 @dataclass
 class UIState:
+    """Estado completo da interface, atualizado a cada evento consumido."""
     fila: Counts = field(default_factory=Counts)
     barco: Boat = field(default_factory=Boat)
     direita: Counts = field(default_factory=Counts)

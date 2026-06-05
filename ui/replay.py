@@ -1,11 +1,11 @@
-"""Replay clock and event scheduling.
+"""Relogio de replay e agendamento de eventos.
 
-Schedules events using the engine's wall-clock `ts` field, so non-boat events
-(CHEGOU, EMBARQUE, DESEMBARQUE) fire at the same relative moment they were
-emitted — including while the boat is mid-crossing.
+Agenda eventos usando o campo `ts` (timestamp monotono do motor C), de modo
+que eventos nao ligados ao barco (CHEGOU, EMBARQUE, DESEMBARQUE) disparam no
+mesmo instante relativo em que foram emitidos.
 
-The UI clock advances by (dt_real * speed); events are popped when their t_sim
-is reached.
+O relogio da UI avanca por (dt_real * speed); eventos sao consumidos quando
+seu t_sim e alcancado.
 """
 
 from __future__ import annotations
@@ -24,11 +24,7 @@ class ScheduledEvent:
 
 
 def schedule_events(events: list[Event]) -> list[ScheduledEvent]:
-    """Assign each event a simulated-time stamp from its `ts`.
-
-    `ts` is the engine's monotonic timestamp in milliseconds. We rebase to 0
-    at the first event so the UI clock can start at 0.
-    """
+    """Atribui tempo simulado a cada evento, rebaseando ts para zero."""
     if not events:
         return []
     t0 = events[0].ts

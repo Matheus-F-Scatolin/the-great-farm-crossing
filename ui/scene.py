@@ -1,7 +1,7 @@
-"""Render the scene each frame.
+"""Renderiza a cena a cada frame.
 
-Scene = static background + queue sprites on left/right margins + boat
-interpolated across the river + up to 3 passenger sprites on the boat + HUD.
+Cena = fundo estatico + sprites nas margens esquerda/direita + barco
+interpolado pelo rio + ate 3 passageiros no barco + HUD.
 """
 
 from __future__ import annotations
@@ -22,10 +22,11 @@ from .constants import (
 from .state import UIState
 
 
-PANEL_BG = (32, 38, 30, 220)
-PANEL_FG = (240, 240, 230)
-PANEL_DIM = (170, 170, 160)
-ACCENT = (255, 220, 120)
+# Cores do painel HUD (RGBA com transparencia).
+PANEL_BG = (32, 38, 30, 220)     # Fundo semi-transparente.
+PANEL_FG = (240, 240, 230)       # Texto principal.
+PANEL_DIM = (170, 170, 160)      # Texto secundario.
+ACCENT = (255, 220, 120)          # Destaque (ultimo evento, velocidade).
 
 
 def _stack_queue(
@@ -39,7 +40,7 @@ def _stack_queue(
     col_spacing: int = 40,
     cols_per_row: int = 3,
 ) -> int:
-    """Draw `count` copies of `sprite` arranged in a small grid. Returns y_bottom."""
+    """Desenha `count` copias de `sprite` em grade. Retorna y inferior."""
     if count <= 0:
         return y_top
     sw = sprite.get_width()
@@ -68,6 +69,7 @@ def _draw_margin_groups(
     label: str,
     font: pygame.font.Font,
 ) -> None:
+    """Desenha os 3 grupos de sprites (raposas, ovelhas, fazendeiros) numa margem."""
     y = HUD_TOP_H + 32
     label_surf = font.render(label, True, PANEL_FG)
     surface.blit(label_surf, (x_center - label_surf.get_width() // 2, y - 24))

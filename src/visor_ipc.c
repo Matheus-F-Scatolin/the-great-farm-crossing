@@ -14,6 +14,7 @@
 #define usleep(us) Sleep((us) / 1000)
 #endif
 
+/* Retorna timestamp monotono em milissegundos (usado no campo `ts` do JSON). */
 static long long visor_ts_ms(void) {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -24,11 +25,16 @@ static const char *lado_str(LadoBarco lado) {
     return lado == LADO_ESQUERDA ? "ESQUERDA" : "DIREITA";
 }
 
+/*
+ * Serializa um evento para stdout no formato JSONL.
+ * Inclui snapshot completo do estado (fila, barco, direita) para que o
+ * visualizador possa reconstruir a cena a partir de qualquer ponto.
+ * Eventos globais (PARTIDA, FIM, ...) usam id < 0 e omitem o campo who.
+ */
 static void emit_json_ex(const char *evt, TipoPassageiro who, int id, int dur_ms) {
     if (g_config.no_vis) {
         return;
     }
-    /* Eventos globais (PARTIDA, FIM, …) usam id < 0 e omitem o campo who. */
     const char *who_str = (who == TIPO_RAPOSA || who == TIPO_OVELHA || who == TIPO_FAZENDEIRO) ? tipo_nome(who) : "";
     if (dur_ms > 0) {
         printf(
@@ -83,6 +89,7 @@ void visor_log(const char *fmt, ...) {
     va_end(ap);
 }
 
+/* Suspende a thread por `ms` milissegundos (wrapper portavel). */
 static void sleep_ms(int ms) {
     if (ms > 0) {
         usleep((unsigned int)ms * 1000);

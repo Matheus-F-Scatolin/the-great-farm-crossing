@@ -10,6 +10,7 @@ from typing import Iterable
 
 @dataclass
 class Counts:
+    """Contadores de raposas (r), ovelhas (o) e fazendeiros (f)."""
     r: int = 0
     o: int = 0
     f: int = 0
@@ -23,7 +24,8 @@ class Counts:
 
 @dataclass
 class Boat:
-    r: int = 0
+    """Snapshot do estado do barco num dado instante."""
+    r: int = 0              # raposas a bordo
     o: int = 0
     f: int = 0
     lado: str = "ESQUERDA"
@@ -44,6 +46,7 @@ class Boat:
 
 @dataclass
 class Event:
+    """Um evento JSONL emitido pelo motor C."""
     evt: str
     who: str = ""
     id: int = -1
@@ -56,6 +59,7 @@ class Event:
 
 
 def parse_line(line: str) -> Event | None:
+    """Converte uma linha JSON em Event; retorna None se invalida."""
     line = line.strip()
     if not line:
         return None
@@ -77,6 +81,7 @@ def parse_line(line: str) -> Event | None:
 
 
 def load_events(path: Path) -> list[Event]:
+    """Carrega todos os eventos de um arquivo JSONL (suporta UTF-8 e UTF-16)."""
     out: list[Event] = []
     try:
         # Tenta ler como UTF-8 (suporta UTF-8 com ou sem BOM)

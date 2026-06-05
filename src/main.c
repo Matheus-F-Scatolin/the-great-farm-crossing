@@ -8,6 +8,7 @@
 #include "threads.h"
 #include "visor_ipc.h"
 
+/* Exibe mensagem de uso com todas as flags disponiveis. */
 static void print_usage(const char *prog) {
     fprintf(stderr,
             "Uso: %s [opcoes]\n"
@@ -28,6 +29,7 @@ static void print_usage(const char *prog) {
             DEFAULT_EMBARK_MS, DEFAULT_RETURN_MS, DEFAULT_MAX_TRAVESSIAS_COMPLETAS);
 }
 
+/* Processa argv usando getopt_long; retorna 1 (ok), 0 (--help) ou -1 (erro). */
 static int parse_args(int argc, char **argv, SimConfig *cfg) {
     static struct option long_opts[] = {
         {"raposas", required_argument, 0, 'r'},
@@ -124,6 +126,7 @@ int main(int argc, char **argv) {
     visor_log("Iniciando simulacao: %d raposas, %d ovelhas, %d fazendeiros (seed=%u)\n",
               cfg.raposas, cfg.ovelhas, cfg.fazendeiros, cfg.seed);
 
+    /* Cria threads: raposas, depois ovelhas, depois fazendeiros. */
     int next_id = 0;
     int t;
     for (t = 0; t < cfg.raposas; t++) {
@@ -147,6 +150,7 @@ int main(int argc, char **argv) {
         pthread_create(&threads[offset + t], NULL, passageiro_thread, arg);
     }
 
+    /* Aguarda todas as threads terminarem antes de encerrar. */
     for (t = 0; t < total; t++) {
         pthread_join(threads[t], NULL);
     }

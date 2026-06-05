@@ -1,4 +1,4 @@
-"""Load background, boat, and crop character idle frames from existing sheets."""
+"""Carrega fundo, barco e frames idle dos personagens a partir das spritesheets."""
 
 from __future__ import annotations
 
@@ -22,6 +22,7 @@ from .constants import (
 
 @dataclass
 class Assets:
+    """Agrupa todas as surfaces Pygame usadas na renderizacao."""
     background: pygame.Surface
     boat_right: pygame.Surface
     boat_left: pygame.Surface
@@ -34,6 +35,7 @@ class Assets:
 
 
 def _crop(sheet: pygame.Surface, frame_size: tuple[int, int], idx: tuple[int, int]) -> pygame.Surface:
+    """Recorta um frame da spritesheet pela posicao (coluna, linha)."""
     fw, fh = frame_size
     c, r = idx
     rect = pygame.Rect(c * fw, r * fh, fw, fh)
@@ -41,6 +43,7 @@ def _crop(sheet: pygame.Surface, frame_size: tuple[int, int], idx: tuple[int, in
 
 
 def _scale_to_width(surf: pygame.Surface, target_w: int) -> pygame.Surface:
+    """Redimensiona mantendo proporcao para que a largura fique em target_w."""
     w, h = surf.get_size()
     if w == target_w:
         return surf

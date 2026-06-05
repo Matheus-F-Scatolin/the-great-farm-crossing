@@ -1,4 +1,4 @@
-"""CLI entrypoint: replay a JSONL log of the farm-crossing engine."""
+"""Ponto de entrada CLI: reproduz um log JSONL do motor farm_crossing."""
 
 from __future__ import annotations
 

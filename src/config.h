@@ -1,21 +1,23 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+/* Parametros de configuracao da simulacao, preenchidos via CLI. */
 typedef struct {
-    int raposas;
-    int ovelhas;
-    int fazendeiros;
-    double lambda_raposa;
+    int raposas;                    /* Quantidade de threads raposa.                  */
+    int ovelhas;                    /* Quantidade de threads ovelha.                  */
+    int fazendeiros;                /* Quantidade de threads fazendeiro.              */
+    double lambda_raposa;           /* Taxa de chegada (Hz) — distribuicao de Poisson.*/
     double lambda_ovelha;
     double lambda_fazendeiro;
-    unsigned int seed;
-    int boat_speed_ms;
-    int embark_ms;
-    int return_ms;
-    int max_travessias_completas;
-    int no_vis;
+    unsigned int seed;              /* Semente do gerador pseudo-aleatorio.           */
+    int boat_speed_ms;              /* Duracao da travessia do rio (ms).              */
+    int embark_ms;                  /* Pausa entre cada embarque/desembarque (ms).    */
+    int return_ms;                  /* Duracao do retorno vazio do barco (ms).        */
+    int max_travessias_completas;   /* 0 = sem limite.                                */
+    int no_vis;                     /* Se 1, suprime saida JSON em stdout.            */
 } SimConfig;
 
+/* --- Valores padrao (podem ser sobrescritos via flags de linha de comando) --- */
 #define DEFAULT_RAPOSAS 6
 #define DEFAULT_OVELHAS 9
 #define DEFAULT_FAZENDEIROS 3
@@ -28,6 +30,7 @@ typedef struct {
 #define DEFAULT_RETURN_MS 800
 #define DEFAULT_MAX_TRAVESSIAS_COMPLETAS 0
 
+/* Preenche todos os campos de `cfg` com os valores padrao. */
 static inline void config_init_defaults(SimConfig *cfg) {
     cfg->raposas = DEFAULT_RAPOSAS;
     cfg->ovelhas = DEFAULT_OVELHAS;

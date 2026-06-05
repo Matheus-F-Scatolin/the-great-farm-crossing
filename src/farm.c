@@ -34,6 +34,7 @@ int combinacao_valida(int r, int o, int f) {
     return 0;
 }
 
+/* Verifica se o combo (r,o,f) pode ser formado agora (barco vazio + fila suficiente). */
 static int combo_disponivel(const FarmState *s, int r, int o, int f) {
     if (s->barco_ocupacao != 0 || s->barco_lado != LADO_ESQUERDA) {
         return 0;
@@ -79,11 +80,13 @@ void aplicar_combo(FarmState *s, int r, int o, int f) {
     s->trip_boarded = 0;
 }
 
+/* Wrapper rapido: tenta escolher qualquer combo; retorna 1 se possivel. */
 int farm_pode_formar_combo(const FarmState *s) {
     int r, o, f;
     return escolher_combo(s, &r, &o, &f);
 }
 
+/* Retorna quantos slots deste tipo ainda nao foram reivindicados na viagem atual. */
 int farm_slots_disponiveis_tipo(TipoPassageiro tipo) {
     if (g_farm.barco_ocupacao != 3) {
         return 0;
@@ -99,6 +102,7 @@ int farm_slots_disponiveis_tipo(TipoPassageiro tipo) {
     return 0;
 }
 
+/* Reivindica atomicamente 1 slot de embarque para `tipo`. Retorna 0 se esgotado. */
 int farm_claim_slot(FarmState *s, TipoPassageiro tipo) {
     switch (tipo) {
     case TIPO_RAPOSA:
@@ -124,6 +128,7 @@ int farm_claim_slot(FarmState *s, TipoPassageiro tipo) {
     return 1;
 }
 
+/* Converte o enum TipoPassageiro para string (usada em logs e JSON). */
 const char *tipo_nome(TipoPassageiro tipo) {
     switch (tipo) {
     case TIPO_RAPOSA:
@@ -136,6 +141,7 @@ const char *tipo_nome(TipoPassageiro tipo) {
     return "DESCONHECIDO";
 }
 
+/* Inicializa o estado global: zera contadores, barco na esquerda, simulacao ativa. */
 void farm_init(SimConfig *cfg) {
     g_config = *cfg;
     memset(&g_farm, 0, sizeof(g_farm));
@@ -147,6 +153,7 @@ void farm_init(SimConfig *cfg) {
     g_farm.pendentes_chegada = cfg->raposas + cfg->ovelhas + cfg->fazendeiros;
 }
 
+/* Soma de todas as threads aguardando na fila esquerda. */
 int farm_fila_total(const FarmState *s) {
     return s->raposas_fila + s->ovelhas_fila + s->fazendeiros_fila;
 }

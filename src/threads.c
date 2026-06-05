@@ -15,6 +15,7 @@
 
 #include "visor_ipc.h"
 
+/* Retorna o lambda (taxa de Poisson) configurado para o tipo de passageiro. */
 static double lambda_for_tipo(TipoPassageiro tipo) {
     switch (tipo) {
     case TIPO_RAPOSA:
@@ -27,6 +28,7 @@ static double lambda_for_tipo(TipoPassageiro tipo) {
     return 0.5;
 }
 
+/* Atrasa a thread por um tempo sorteado da distribuicao exponencial (Poisson). */
 static void sleep_arrival_delay(TipoPassageiro tipo) {
     double lambda = lambda_for_tipo(tipo);
     if (lambda <= 0.0) {
@@ -40,6 +42,7 @@ static void sleep_arrival_delay(TipoPassageiro tipo) {
     usleep((unsigned int)(delay * 1000000.0));
 }
 
+/* Incrementa o contador de fila do tipo correspondente (sem lock — chamada dentro do mutex). */
 static void increment_fila(TipoPassageiro tipo) {
     switch (tipo) {
     case TIPO_RAPOSA:
@@ -54,6 +57,7 @@ static void increment_fila(TipoPassageiro tipo) {
     }
 }
 
+/* Tenta reivindicar um slot de embarque; emite evento EMBARQUE se obteve. */
 static int try_claim_boarding_slot(TipoPassageiro tipo, int id) {
     if (g_farm.barco_ocupacao != 3) {
         return 0;
@@ -73,6 +77,7 @@ static int try_claim_boarding_slot(TipoPassageiro tipo, int id) {
     return 1;
 }
 
+/* Retorna 1 se o combo (r,o,f) inclui pelo menos 1 passageiro do tipo dado. */
 static int combo_inclui_tipo(int r, int o, int f, TipoPassageiro tipo) {
     switch (tipo) {
     case TIPO_RAPOSA:
@@ -85,6 +90,7 @@ static int combo_inclui_tipo(int r, int o, int f, TipoPassageiro tipo) {
     return 0;
 }
 
+/* Tenta montar combo como lider: reserva slots, embarca a si mesmo, acorda seguidores. */
 static int try_form_combo_as_leader(int id, TipoPassageiro tipo) {
     int r, o, f;
     if (!escolher_combo(&g_farm, &r, &o, &f)) {
@@ -109,6 +115,7 @@ static int try_form_combo_as_leader(int id, TipoPassageiro tipo) {
     return 1;
 }
 
+/* Verifica se todos os passageiros ja cruzaram (fim natural da simulacao). */
 static int simulacao_terminou(void) {
     return g_farm.raposas_direita >= g_farm.total_raposas &&
            g_farm.ovelhas_direita >= g_farm.total_ovelhas &&
