@@ -8,6 +8,7 @@ pthread_mutex_t g_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_cond_embarque = PTHREAD_COND_INITIALIZER;
 /* Seguidores aguardam o lider concluir atravessar_rio() antes de desembarcar logicamente. */
 pthread_cond_t g_cond_viagem = PTHREAD_COND_INITIALIZER;
+pthread_cond_t g_cond_desembarque = PTHREAD_COND_INITIALIZER;
 SimConfig g_config;
 
 /*
@@ -78,6 +79,7 @@ void aplicar_combo(FarmState *s, int r, int o, int f) {
     s->boarded_o = 0;
     s->boarded_f = 0;
     s->trip_boarded = 0;
+    s->trip_disembarked = 0;
 }
 
 /* Wrapper rapido: tenta escolher qualquer combo; retorna 1 se possivel. */

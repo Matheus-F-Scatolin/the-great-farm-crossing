@@ -212,28 +212,44 @@ void *passageiro_thread(void *arg) {
         g_farm.fazendeiros_direita += trip_f;
         g_farm.travessias_completas_feitas++;
 
+        visor_log("[Desembarque] viagem %d concluida. Direita r=%d o=%d f=%d\n",
+                  g_farm.travessias_completas_feitas, g_farm.raposas_direita, g_farm.ovelhas_direita,
+                  g_farm.fazendeiros_direita);
+
+        /* Acorda seguidores para que desembarquem antes de liberar o barco. */
+        pthread_cond_broadcast(&g_cond_viagem);
+
+        /* Lider desembarca. */
+        visor_log("[Desembarque] %s %d cruzou o rio com seguranca\n", tipo_nome(tipo), id);
+        g_farm.trip_disembarked++;
+
+        /* Espera todos os seguidores desembarcarem antes de resetar o barco. */
+        while (g_farm.trip_disembarked < 3 && g_farm.simulacao_ativa) {
+            pthread_cond_wait(&g_cond_desembarque, &g_mutex);
+        }
+
+        /* Agora sim reseta o barco e permite novos combos. */
         g_farm.raposas_barco = 0;
         g_farm.ovelhas_barco = 0;
         g_farm.fazendeiros_barco = 0;
         g_farm.barco_ocupacao = 0;
         g_farm.trip_boarded = 0;
         g_farm.trip_leader_id = -1;
-
-        visor_log("[Desembarque] viagem %d concluida. Direita r=%d o=%d f=%d\n",
-                  g_farm.travessias_completas_feitas, g_farm.raposas_direita, g_farm.ovelhas_direita,
-                  g_farm.fazendeiros_direita);
+        g_farm.trip_disembarked = 0;
 
         if (simulacao_terminou()) {
             g_farm.simulacao_ativa = 0;
         }
 
-        pthread_cond_broadcast(&g_cond_viagem);
         pthread_cond_broadcast(&g_cond_embarque);
     } else {
         pthread_cond_wait(&g_cond_viagem, &g_mutex);
-    }
 
-    visor_log("[Desembarque] %s %d cruzou o rio com seguranca\n", tipo_nome(tipo), id);
+        /* Seguidor desembarca e sinaliza ao lider. */
+        visor_log("[Desembarque] %s %d cruzou o rio com seguranca\n", tipo_nome(tipo), id);
+        g_farm.trip_disembarked++;
+        pthread_cond_signal(&g_cond_desembarque);
+    }
 
     pthread_mutex_unlock(&g_mutex);
     free(p);

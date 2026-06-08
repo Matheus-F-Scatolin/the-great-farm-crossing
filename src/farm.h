@@ -31,6 +31,7 @@ typedef struct {
     int boarded_r;                   /* Slots ja reivindicados por raposas.           */
     int boarded_o;
     int boarded_f;
+    int trip_disembarked;            /* Quantos ja desembarcaram nesta viagem (0..3). */
     /* Totais configurados (imutaveis apos farm_init). */
     int total_raposas;
     int total_ovelhas;
@@ -42,6 +43,8 @@ extern FarmState g_farm;
 extern pthread_mutex_t g_mutex;
 extern pthread_cond_t g_cond_embarque;
 extern pthread_cond_t g_cond_viagem;
+/* Seguidores sinalizam ao lider que ja desembarcaram, antes de liberar o barco. */
+extern pthread_cond_t g_cond_desembarque;
 extern SimConfig g_config;
 
 /* Retorna 1 se (r,o,f) formam um combo seguro de 3 passageiros. */
